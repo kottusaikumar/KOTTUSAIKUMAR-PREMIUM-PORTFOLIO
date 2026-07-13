@@ -1,0 +1,132 @@
+/* 01-skills-theme.css
+   Skills section — base layout + soft white/glass theme.
+   Extracted verbatim from the original src/styles/portfolio.css
+   (lines 985-1108) — content unchanged, only the file location
+   moved. Import order in index.css matches the original source
+   order exactly; do not reorder these imports, later files rely
+   on cascade order to override earlier ones. */
+
+/* =========================================================
+   SKILLS — soft white, glass motif
+   ========================================================= */
+.skills {
+  position: relative;
+  z-index: 10;
+  background: transparent;
+  color: var(--c-charcoal);
+  padding: clamp(80px, 12vh, 140px) var(--gutter);
+  overflow: hidden;
+}
+
+.skills-header {
+  text-align: center;
+  margin-bottom: clamp(48px, 7vh, 80px);
+  position: relative;
+  z-index: 1;
+}
+.skills-header .section-eyebrow {
+  background: rgba(156, 134, 98, 0.1);
+  color: var(--c-skills-accent);
+  border: 0.5px solid rgba(156, 134, 98, 0.25);
+}
+
+.skills-title {
+  font-family: var(--font-display);
+  font-weight: 500;
+  font-size: clamp(2.2rem, 1.5rem + 2.6vw, 3.6rem);
+  line-height: 1.1;
+  letter-spacing: -0.015em;
+  color: var(--c-charcoal);
+}
+.skills-title strong {
+  font-weight: 700;
+  color: var(--c-mocha-accent);
+  font-style: italic;
+}
+
+.skills-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(108px, 1fr));
+  gap: 14px;
+  max-width: 1400px;
+  margin: 0 auto;
+  position: relative;
+  z-index: 1;
+}
+@media (min-width: 1200px) {
+  .skills-grid {
+    grid-template-columns: repeat(10, 1fr);
+  }
+}
+
+.skill-cell {
+  background: rgba(255, 255, 255, 0.55);
+  border: 0.5px solid rgba(43, 37, 32, 0.08);
+  border-radius: 16px;
+  aspect-ratio: 1 / 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 14px 10px;
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+  transition:
+    background 0.3s var(--ease-out),
+    border-color 0.3s var(--ease-out),
+    transform 0.35s var(--ease-spring),
+    box-shadow 0.3s var(--ease-out);
+  backdrop-filter: blur(10px) saturate(1.1);
+  box-shadow: 0 1px 2px rgba(43, 37, 32, 0.04);
+}
+.skill-cell:hover {
+  transform: translateY(-6px) scale(1.05);
+  border-color: rgba(156, 134, 98, 0.4);
+  background: rgba(255, 255, 255, 0.85);
+  box-shadow:
+    0 16px 40px rgba(43, 37, 32, 0.1),
+    0 0 0 1px rgba(156, 134, 98, 0.15);
+}
+
+.skill-cell-icon {
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: rgba(43, 37, 32, 0.72);
+  transition: transform 0.35s var(--ease-spring);
+}
+.skill-cell:hover .skill-cell-icon {
+  transform: scale(1.12);
+}
+
+.skill-cell-icon img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  transition: filter 0.25s var(--ease-out);
+}
+.skill-cell-icon svg {
+  width: 36px;
+  height: 36px;
+  transition: color 0.25s var(--ease-out);
+}
+.skill-cell:hover .skill-cell-icon svg {
+  color: var(--c-mocha-accent);
+}
+
+.skill-cell-name {
+  font-size: 0.7rem;
+  font-weight: 600;
+  color: rgba(43, 37, 32, 0.7);
+  text-align: center;
+  letter-spacing: 0.01em;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 100%;
+}
+

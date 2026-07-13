@@ -1,0 +1,785 @@
+/* 06-motion-upgrade-section-identities.css
+   Historical revision: 'Premium $30K Motion Upgrade' — section-specific identity pass across Skills/Experience/About/Contact/Process/Proof.
+   Extracted verbatim from the original src/styles/portfolio.css
+   (lines 2715-3491) — content unchanged, only the file location
+   moved. Import order in index.css matches the original source
+   order exactly; do not reorder these imports, later files rely
+   on cascade order to override earlier ones. */
+
+/* =========================================================
+   PREMIUM $30K MOTION UPGRADE — section-specific identities
+   ========================================================= */
+.skills,
+.experience,
+.process,
+.about,
+.work,
+.proof,
+.contact {
+  min-height: 100vh;
+  isolation: isolate;
+}
+.skills::after,
+.experience::after,
+.process::after,
+.about::after,
+.work::after,
+.proof::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  bottom: -1px;
+  width: min(86vw, 1180px);
+  height: 1px;
+  transform: translateX(-50%);
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.28),
+    transparent
+  );
+  pointer-events: none;
+}
+
+.skills-stage {
+  max-width: 1420px;
+  margin: 0 auto;
+  position: relative;
+  z-index: 2;
+  perspective: 1400px;
+  transform-style: preserve-3d;
+  padding: clamp(10px, 2vw, 26px);
+}
+.skill-slab {
+  position: relative;
+  border-radius: clamp(24px, 3vw, 42px);
+  padding: clamp(18px, 2.4vw, 34px);
+  background:
+    linear-gradient(
+      135deg,
+      rgba(255, 255, 255, 0.82),
+      rgba(250, 246, 239, 0.42)
+    ),
+    radial-gradient(
+      circle at 18% 12%,
+      rgba(255, 255, 255, 0.85),
+      transparent 30%
+    ),
+    radial-gradient(
+      circle at 84% 78%,
+      rgba(201, 168, 118, 0.18),
+      transparent 34%
+    );
+  border: 1px solid rgba(156, 134, 98, 0.22);
+  box-shadow:
+    0 44px 110px rgba(43, 37, 32, 0.14),
+    inset 0 1px 0 rgba(255, 255, 255, 0.8),
+    inset 0 -1px 0 rgba(156, 134, 98, 0.08);
+  transform-style: preserve-3d;
+  will-change: transform;
+  overflow: hidden;
+}
+.skill-slab::before {
+  content: "";
+  position: absolute;
+  inset: 14px;
+  border-radius: calc(clamp(24px, 3vw, 42px) - 10px);
+  border: 1px solid rgba(156, 134, 98, 0.12);
+  pointer-events: none;
+  transform: translateZ(18px);
+}
+.skill-slab-shine {
+  position: absolute;
+  inset: -40%;
+  background: linear-gradient(
+    115deg,
+    transparent 38%,
+    rgba(255, 255, 255, 0.42) 48%,
+    transparent 58%
+  );
+  transform: translateX(-34%) rotate(8deg);
+  animation: slabShine 7s ease-in-out infinite;
+  pointer-events: none;
+}
+@keyframes slabShine {
+  0%,
+  42% {
+    transform: translateX(-42%) rotate(8deg);
+    opacity: 0;
+  }
+  52% {
+    opacity: 1;
+  }
+  72%,
+  100% {
+    transform: translateX(38%) rotate(8deg);
+    opacity: 0;
+  }
+}
+.skill-slab .skills-grid {
+  transform: translateZ(42px);
+}
+.skill-cell {
+  transform-style: preserve-3d;
+}
+.skill-cell::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    135deg,
+    rgba(255, 255, 255, 0.58),
+    transparent 58%
+  );
+  opacity: 0;
+  transition: opacity 0.3s var(--ease-out);
+}
+.skill-cell:hover::before {
+  opacity: 1;
+}
+.skill-cell:hover {
+  transform: translateY(-7px) translateZ(28px) scale(1.035);
+}
+
+/* PROCESS — isometric production pipeline */
+.process {
+  position: relative;
+  z-index: 10;
+  background: transparent;
+  color: var(--c-charcoal);
+  padding: clamp(80px, 12vh, 140px) var(--gutter);
+  overflow: hidden;
+}
+.process-header {
+  text-align: center;
+  max-width: 860px;
+  margin: 0 auto clamp(44px, 7vh, 78px);
+  position: relative;
+  z-index: 2;
+}
+.process-header .section-eyebrow {
+  background: rgba(169, 120, 70, 0.12);
+  color: #8c6339;
+  border: 0.5px solid rgba(169, 120, 70, 0.24);
+}
+.process-title,
+.proof-title {
+  font-family: var(--font-display);
+  font-weight: 500;
+  font-size: clamp(2.2rem, 1.5rem + 2.6vw, 3.6rem);
+  letter-spacing: -0.015em;
+  line-height: 1.08;
+}
+.process-title strong {
+  font-style: italic;
+  color: #a97846;
+}
+.process-intro {
+  margin: 20px auto 0;
+  max-width: 640px;
+  color: rgba(43, 37, 32, 0.6);
+  line-height: 1.75;
+}
+.process-grid {
+  max-width: 1180px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: clamp(16px, 2vw, 24px);
+  position: relative;
+  z-index: 2;
+  perspective: 1200px;
+}
+.process-card {
+  min-height: 260px;
+  padding: clamp(22px, 2.3vw, 32px);
+  border-radius: 26px;
+  background: rgba(255, 255, 255, 0.55);
+  border: 1px solid rgba(169, 120, 70, 0.18);
+  box-shadow:
+    0 26px 70px rgba(92, 65, 38, 0.12),
+    inset 0 1px 0 rgba(255, 255, 255, 0.65);
+  backdrop-filter: blur(14px) saturate(1.15);
+  transform-style: preserve-3d;
+  position: relative;
+  overflow: hidden;
+  transition:
+    transform 0.45s var(--ease-spring),
+    box-shadow 0.45s var(--ease-out),
+    border-color 0.45s var(--ease-out);
+}
+.process-card::after {
+  content: "";
+  position: absolute;
+  inset: auto 22px 22px auto;
+  width: 52px;
+  height: 52px;
+  border-radius: 16px;
+  border: 1px solid rgba(169, 120, 70, 0.2);
+  transform: rotate(45deg);
+  opacity: 0.45;
+}
+.process-card:hover {
+  transform: translateY(-10px) rotateX(4deg) rotateY(-5deg);
+  border-color: rgba(169, 120, 70, 0.35);
+  box-shadow: 0 34px 90px rgba(92, 65, 38, 0.18);
+}
+.process-step {
+  font-family: var(--font-display);
+  font-size: 2.8rem;
+  color: rgba(169, 120, 70, 0.22);
+  display: block;
+  margin-bottom: 24px;
+}
+.process-card h3 {
+  font-family: var(--font-display);
+  font-size: 1.45rem;
+  margin-bottom: 12px;
+}
+.process-card p {
+  color: rgba(43, 37, 32, 0.62);
+  font-size: 0.9rem;
+  line-height: 1.75;
+}
+.process-rail {
+  max-width: 1100px;
+  height: clamp(160px, 20vw, 240px);
+  margin: 8px auto 20px;
+  position: relative;
+  z-index: 1;
+  overflow: visible;
+}
+.process-rail-line {
+  display: block;
+  position: absolute;
+  top: 50%;
+  left: 0;
+  height: 1px;
+  width: 100%;
+  transform: scaleX(0) translateY(-50%);
+  transform-origin: left;
+  background: linear-gradient(90deg, transparent, #a97846, transparent);
+}
+
+/* EXPERIENCE — editorial paper spine */
+.experience-list::before {
+  content: "";
+  position: absolute;
+  left: clamp(12px, 2vw, 28px);
+  top: 0;
+  bottom: 0;
+  width: 1px;
+  background: linear-gradient(
+    180deg,
+    transparent,
+    rgba(244, 239, 230, 0.35),
+    transparent
+  );
+}
+.experience-card {
+  transform-style: preserve-3d;
+}
+.experience-card::before {
+  content: "";
+  position: absolute;
+  top: 22px;
+  left: 0;
+  width: 4px;
+  height: calc(100% - 44px);
+  background: linear-gradient(180deg, var(--c-exp-accent), transparent);
+  opacity: 0.55;
+}
+
+/* ABOUT — cinematic lens */
+.about-illustration {
+  transform-style: preserve-3d;
+}
+.about-illustration::after {
+  content: "";
+  position: absolute;
+  inset: 8%;
+  border-radius: 50%;
+  background: radial-gradient(
+    circle,
+    rgba(255, 255, 255, 0.36),
+    transparent 58%
+  );
+  mix-blend-mode: screen;
+  pointer-events: none;
+  animation: lensBreathe 5.4s ease-in-out infinite;
+}
+@keyframes lensBreathe {
+  0%,
+  100% {
+    transform: scale(0.94);
+    opacity: 0.28;
+  }
+  50% {
+    transform: scale(1.05);
+    opacity: 0.55;
+  }
+}
+
+/* PROJECTS — exhibit panels */
+.work-list {
+  perspective: 1300px;
+}
+.work-item {
+  transform-style: preserve-3d;
+}
+.work-item-media {
+  transform-style: preserve-3d;
+  will-change: transform;
+}
+.work-item-media::after {
+  content: "";
+  position: absolute;
+  inset: 12px;
+  border: 1px solid rgba(232, 201, 136, 0.18);
+  border-radius: 12px;
+  z-index: 2;
+  pointer-events: none;
+}
+
+/* PROOF — orbital metric wall */
+.proof {
+  position: relative;
+  z-index: 10;
+  background: transparent;
+  color: var(--c-cream);
+  padding: clamp(80px, 12vh, 140px) var(--gutter);
+  overflow: hidden;
+}
+.proof-header {
+  text-align: center;
+  margin-bottom: clamp(46px, 7vh, 76px);
+  position: relative;
+  z-index: 2;
+}
+.proof-header .section-eyebrow {
+  background: rgba(232, 201, 136, 0.12);
+  color: var(--c-projects-accent);
+  border: 0.5px solid rgba(232, 201, 136, 0.25);
+}
+.proof-title strong {
+  color: var(--c-projects-accent);
+  font-style: italic;
+}
+.proof-grid {
+  max-width: 1120px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: clamp(16px, 2vw, 24px);
+  position: relative;
+  z-index: 2;
+}
+.proof-card {
+  min-height: 230px;
+  border-radius: 999px 999px 28px 28px;
+  padding: 34px 24px 26px;
+  text-align: center;
+  background: linear-gradient(
+    180deg,
+    rgba(255, 255, 255, 0.1),
+    rgba(255, 255, 255, 0.045)
+  );
+  border: 1px solid rgba(232, 201, 136, 0.22);
+  box-shadow:
+    0 30px 80px rgba(0, 0, 0, 0.22),
+    inset 0 1px 0 rgba(255, 255, 255, 0.12);
+  backdrop-filter: blur(12px);
+  transition:
+    transform 0.45s var(--ease-spring),
+    border-color 0.45s var(--ease-out),
+    box-shadow 0.45s var(--ease-out);
+}
+.proof-card:hover {
+  transform: translateY(-10px) scale(1.03);
+  border-color: rgba(232, 201, 136, 0.48);
+  box-shadow: 0 42px 110px rgba(0, 0, 0, 0.32);
+}
+.proof-card strong {
+  display: block;
+  font-family: var(--font-display);
+  font-size: clamp(2.4rem, 1.7rem + 2.2vw, 4rem);
+  color: var(--c-projects-accent);
+  line-height: 1;
+  margin-bottom: 16px;
+}
+.proof-card span {
+  display: block;
+  font-weight: 700;
+  font-size: 0.82rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  margin-bottom: 12px;
+}
+.proof-card p {
+  color: rgba(244, 239, 230, 0.62);
+  font-size: 0.86rem;
+  line-height: 1.65;
+}
+.proof-orbit {
+  position: absolute;
+  width: min(72vw, 760px);
+  aspect-ratio: 1;
+  border-radius: 50%;
+  border: 1px solid rgba(232, 201, 136, 0.12);
+  left: 50%;
+  top: 52%;
+  transform: translate(-50%, -50%);
+  animation: proofOrbit 18s linear infinite;
+}
+.proof-orbit::before,
+.proof-orbit::after {
+  content: "";
+  position: absolute;
+  inset: 12%;
+  border-radius: 50%;
+  border: 1px solid rgba(232, 201, 136, 0.08);
+}
+.proof-orbit::after {
+  inset: 28%;
+}
+@keyframes proofOrbit {
+  to {
+    transform: translate(-50%, -50%) rotate(360deg);
+  }
+}
+
+/* CONTACT — beacon landing */
+.contact::before {
+  content: "";
+  position: absolute;
+  width: min(64vw, 620px);
+  aspect-ratio: 1;
+  border-radius: 50%;
+  right: -12%;
+  top: 8%;
+  background: radial-gradient(
+    circle,
+    rgba(160, 255, 255, 0.32),
+    rgba(6, 148, 148, 0.16) 38%,
+    transparent 68%
+  );
+  filter: blur(6px);
+  animation: beaconPulse 4.8s ease-in-out infinite;
+  pointer-events: none;
+}
+@keyframes beaconPulse {
+  0%,
+  100% {
+    transform: scale(0.92);
+    opacity: 0.55;
+  }
+  50% {
+    transform: scale(1.05);
+    opacity: 1;
+  }
+}
+.contact-form {
+  transform-style: preserve-3d;
+}
+.contact-form::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: linear-gradient(
+    135deg,
+    rgba(160, 255, 255, 0.22),
+    transparent 42%
+  );
+  opacity: 0.5;
+  pointer-events: none;
+}
+
+body[data-tone="proof"] .site-header,
+body[data-tone="proof"] .brand,
+body[data-tone="proof"] .header-nav a {
+  color: #f4efe6;
+}
+
+@media (max-width: 980px) {
+  .process-grid,
+  .proof-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 760px) {
+  .skills-stage {
+    padding: 0;
+    perspective: none;
+  }
+  .skill-slab {
+    transform: none !important;
+    padding: 14px;
+    border-radius: 22px;
+  }
+  .process-grid,
+  .proof-grid {
+    grid-template-columns: 1fr;
+  }
+  .process-card,
+  .proof-card {
+    min-height: auto;
+  }
+  .process-rail,
+  .proof-orbit {
+    display: none;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .skill-slab,
+  .skill-cell,
+  .process-card,
+  .proof-card,
+  .work-item-media,
+  .about-illustration,
+  .contact-form {
+    transform: none !important;
+    animation: none !important;
+  }
+  .skill-slab-shine,
+  .proof-orbit,
+  .contact::before,
+  .about-illustration::after,
+  .skills::before {
+    animation: none !important;
+  }
+}
+
+/* Targeted v3 correction: keep previous global palette, add only section-open gateways
+   and premium recolors for Process + Proof Wall. Proof keeps the original arch shape. */
+.section-world {
+  position: relative;
+}
+.section-gateway {
+  position: absolute;
+  left: 50%;
+  top: 0;
+  width: min(92vw, 1260px);
+  height: 1px;
+  transform: translateX(-50%);
+  z-index: 3;
+  pointer-events: none;
+  background: linear-gradient(90deg, transparent, currentColor, transparent);
+  box-shadow: 0 0 38px currentColor;
+  opacity: 0.82;
+}
+.gateway-skills {
+  color: rgba(169, 120, 70, 0.54);
+}
+.gateway-experience {
+  color: rgba(244, 239, 230, 0.5);
+}
+.gateway-process {
+  color: rgba(197, 118, 49, 0.68);
+}
+.gateway-about {
+  color: rgba(169, 120, 70, 0.45);
+}
+.gateway-work {
+  color: rgba(232, 201, 136, 0.55);
+}
+.gateway-proof {
+  color: rgba(141, 181, 255, 0.5);
+}
+.gateway-contact {
+  color: rgba(0, 220, 210, 0.62);
+}
+
+/* ── Section gateway curtains — six distinct reveal shapes ──── */
+.section-curtain {
+  position: absolute;
+  inset: 0;
+  z-index: 4;
+  pointer-events: none;
+  overflow: hidden;
+  background: var(--curtain-color, #111);
+}
+
+/* Experience — two doors parting */
+.curtain-shutter {
+  background: none;
+}
+.curtain-panel {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 50%;
+  background: var(--curtain-color);
+}
+.curtain-panel-l {
+  left: 0;
+}
+.curtain-panel-r {
+  right: 0;
+}
+
+/* Process — camera-aperture iris */
+.curtain-iris {
+  clip-path: circle(150% at 50% 50%);
+}
+
+/* About — soft organic dissolve */
+.curtain-dissolve {
+  mix-blend-mode: normal;
+}
+
+/* Work — venetian-blind gallery reveal */
+.curtain-blinds {
+  display: flex;
+  background: none;
+}
+.curtain-bar {
+  flex: 1 1 0;
+  background: var(--curtain-color);
+}
+
+/* Proof — data scanline sweep */
+.curtain-scanline {
+  clip-path: inset(0% 0 0% 0);
+}
+.curtain-scan-line {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  height: 2px;
+  background: #fff;
+  box-shadow:
+    0 0 28px 7px var(--curtain-color),
+    0 0 60px 14px var(--curtain-color);
+  opacity: 0.9;
+}
+
+/* Contact — diamond collapse to a point */
+.curtain-diamond {
+  clip-path: polygon(50% -60%, 160% 50%, 50% 160%, -60% 50%);
+}
+
+/* PROCESS — premium champagne/copper, separated from other light sections */
+.process {
+  color: #2b2118;
+}
+.process::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background:
+    radial-gradient(
+      circle at 78% 10%,
+      rgba(197, 118, 49, 0.18),
+      transparent 34%
+    ),
+    radial-gradient(
+      circle at 12% 82%,
+      rgba(255, 246, 226, 0.42),
+      transparent 36%
+    ),
+    linear-gradient(
+      135deg,
+      rgba(255, 249, 237, 0.52),
+      rgba(214, 166, 106, 0.16)
+    );
+  opacity: 0.92;
+}
+.process-header .section-eyebrow {
+  background: rgba(197, 118, 49, 0.12);
+  color: #92561f;
+  border-color: rgba(197, 118, 49, 0.28);
+}
+.process-title strong,
+.process-step {
+  color: #b86b2d;
+}
+.process-intro,
+.process-card p {
+  color: rgba(43, 33, 24, 0.66);
+}
+.process-card {
+  background: linear-gradient(
+    145deg,
+    rgba(255, 252, 245, 0.64),
+    rgba(255, 244, 222, 0.42)
+  );
+  border-color: rgba(197, 118, 49, 0.22);
+  box-shadow:
+    0 30px 82px rgba(95, 58, 25, 0.13),
+    inset 0 1px 0 rgba(255, 255, 255, 0.74);
+}
+.process-card::after {
+  border-color: rgba(197, 118, 49, 0.26);
+}
+.process-card:hover {
+  border-color: rgba(197, 118, 49, 0.42);
+  box-shadow: 0 38px 96px rgba(95, 58, 25, 0.19);
+}
+.process-rail-line {
+  background: linear-gradient(90deg, transparent, #b86b2d, transparent);
+}
+
+/* PROOF WALL — premium midnight/platinum; original arch/card shape remains unchanged */
+.proof {
+  color: #f4f7ff;
+}
+.proof::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background:
+    radial-gradient(
+      circle at 72% 18%,
+      rgba(141, 181, 255, 0.18),
+      transparent 34%
+    ),
+    radial-gradient(
+      circle at 18% 74%,
+      rgba(255, 255, 255, 0.06),
+      transparent 38%
+    ),
+    linear-gradient(145deg, rgba(16, 24, 39, 0.72), rgba(5, 10, 20, 0.26));
+  opacity: 0.95;
+}
+.proof-header .section-eyebrow {
+  background: rgba(141, 181, 255, 0.1);
+  color: #afc8ff;
+  border-color: rgba(141, 181, 255, 0.24);
+}
+.proof-title strong {
+  color: #afc8ff;
+}
+.proof-card {
+  background: linear-gradient(
+    180deg,
+    rgba(255, 255, 255, 0.11),
+    rgba(255, 255, 255, 0.045)
+  );
+  border-color: rgba(141, 181, 255, 0.22);
+  box-shadow:
+    0 32px 86px rgba(0, 0, 0, 0.28),
+    inset 0 1px 0 rgba(255, 255, 255, 0.13);
+}
+.proof-card:hover {
+  border-color: rgba(141, 181, 255, 0.48);
+  box-shadow:
+    0 44px 114px rgba(0, 0, 0, 0.36),
+    0 0 48px rgba(141, 181, 255, 0.1);
+}
+.proof-card strong {
+  color: #afc8ff;
+}
+.proof-card p {
+  color: rgba(244, 247, 255, 0.64);
+}
+.proof-orbit,
+.proof-orbit::before,
+.proof-orbit::after {
+  border-color: rgba(141, 181, 255, 0.13);
+}
+

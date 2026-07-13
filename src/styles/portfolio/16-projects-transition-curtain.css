@@ -1,0 +1,35 @@
+/* 16-projects-transition-curtain.css
+   Projects section-open curtain transition timing, matched to the other sections.
+   Extracted verbatim from the original src/styles/portfolio.css
+   (lines 4927-4953) — content unchanged, only the file location
+   moved. Import order in index.css matches the original source
+   order exactly; do not reorder these imports, later files rely
+   on cascade order to override earlier ones. */
+
+/* PROJECTS transition - same one-direction curtain timing as the other sections. */
+.work-block-mask {
+  position: absolute;
+  inset: 0;
+  z-index: 80;
+  overflow: hidden;
+  pointer-events: none;
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  background: transparent;
+}
+
+.work-mask-column {
+  position: relative;
+  height: 100%;
+  overflow: hidden;
+  isolation: isolate;
+  background: #ccff00;
+  box-shadow: 0 0 34px rgba(204, 255, 0, 0.22);
+  transform-origin: top;
+  will-change: transform;
+}
+
+.work-mask-column + .work-mask-column {
+  border-left: 1px solid rgba(12, 15, 8, 0.2);
+}
+

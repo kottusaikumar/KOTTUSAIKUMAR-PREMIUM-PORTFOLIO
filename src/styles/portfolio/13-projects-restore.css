@@ -1,0 +1,96 @@
+/* 13-projects-restore.css
+   Projects restore pass — keeps ring/slider design original after later mask experiments.
+   Extracted verbatim from the original src/styles/portfolio.css
+   (lines 4737-4824) — content unchanged, only the file location
+   moved. Import order in index.css matches the original source
+   order exactly; do not reorder these imports, later files rely
+   on cascade order to override earlier ones. */
+
+/* PROJECTS restore - keep ring/slider design original; CCFF00 is mask-only. */
+.work-header .section-eyebrow {
+  background: rgba(255, 255, 255, 0.08);
+  color: rgba(248, 247, 241, 0.72);
+  border-color: rgba(255, 255, 255, 0.14);
+  box-shadow: none;
+}
+
+.work-title strong {
+  color: #f184ff !important;
+  text-shadow: none;
+}
+
+.work-ring-toggle {
+  color: rgba(255, 255, 255, 0.88);
+  border-color: rgba(255, 255, 255, 0.22);
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.work-ring-toggle:hover,
+.work-ring-toggle:focus-visible {
+  background: rgba(241, 132, 255, 0.16);
+  border-color: rgba(241, 132, 255, 0.72);
+  box-shadow: 0 14px 32px rgba(241, 132, 255, 0.16);
+}
+
+.work-card {
+  border-color: rgba(var(--color-card), 0.96);
+  box-shadow:
+    0 28px 70px rgba(0, 0, 0, 0.48),
+    0 0 40px rgba(var(--color-card), 0.44),
+    inset 0 0 46px rgba(255, 255, 255, 0.1),
+    inset 0 -38px 70px rgba(0, 0, 0, 0.22);
+}
+
+.work-card:hover {
+  border-color: rgba(var(--color-card), 0.95);
+  box-shadow:
+    0 36px 96px rgba(0, 0, 0, 0.62),
+    0 0 50px rgba(var(--color-card), 0.5),
+    inset 0 0 52px rgba(255, 255, 255, 0.16);
+}
+
+.work-card-link {
+  color: rgba(255, 255, 255, 0.9);
+  border-color: rgba(var(--color-card), 0.48);
+  background: rgba(0, 0, 0, 0.18);
+}
+
+.work-card-link:hover {
+  background: rgba(var(--color-card), 0.24);
+  color: #fff;
+  border-color: rgba(var(--color-card), 0.95);
+}
+
+.work-card-decor-content span {
+  color: rgb(var(--color-card));
+  border-color: rgba(var(--color-card), 0.5);
+}
+
+.work-card-decor-content strong {
+  color: #fff;
+}
+
+.work-card-decor-content small {
+  color: rgba(255, 255, 255, 0.62);
+}
+
+.project-card {
+  border-color: rgba(20, 20, 26, 0.1);
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.18);
+}
+
+.project-card-title {
+  color: #14141a;
+}
+
+.project-card-link {
+  background: transparent;
+}
+
+.project-card-link:hover {
+  background: rgba(20, 20, 26, 0.06);
+  color: #14141a;
+  border-color: rgba(20, 20, 26, 0.32);
+}
+.project-card-link.project-card-link--animated:hover { background: #111; color: #fff; border-color: transparent; }
+

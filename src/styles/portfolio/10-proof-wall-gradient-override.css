@@ -1,0 +1,61 @@
+/* 10-proof-wall-gradient-override.css
+   Historical revision: exact client-specified Proof Wall gradient override.
+   Extracted verbatim from the original src/styles/portfolio.css
+   (lines 4470-4522) — content unchanged, only the file location
+   moved. Import order in index.css matches the original source
+   order exactly; do not reorder these imports, later files rely
+   on cascade order to override earlier ones. */
+
+/* =========================================================
+   PROOF WALL — client-specified exact gradient override
+   ─────────────────────────────────────────────────────────
+   Every other section (Hero, Skills, Experience, About,
+   Process, Work/Projects, Contact) has been restored to its
+   original colour exactly as it shipped in the source project.
+   Only Proof Wall is recoloured here, appended last so it wins
+   the cascade over the section's original colour rules above. */
+.proof::before {
+  background: linear-gradient(
+    90deg,
+    rgba(0, 198, 232, 1) 0%,
+    rgba(236, 162, 124, 1) 50%,
+    rgba(126, 49, 137, 1) 100%
+  ) !important;
+}
+.proof-header .section-eyebrow {
+  background: rgba(0, 0, 0, 0.22);
+  color: #fff;
+  border-color: rgba(255, 255, 255, 0.3);
+}
+.proof-title,
+.proof-title strong {
+  color: #fff;
+  text-shadow: 0 2px 4px rgba(20, 10, 30, 0.5), 0 8px 30px rgba(20, 10, 30, 0.4);
+}
+.proof-card {
+  background: linear-gradient(
+    180deg,
+    rgba(0, 0, 0, 0.38),
+    rgba(0, 0, 0, 0.22)
+  );
+  border-color: rgba(255, 255, 255, 0.2);
+  box-shadow:
+    0 32px 86px rgba(10, 5, 20, 0.45),
+    inset 0 1px 0 rgba(255, 255, 255, 0.14);
+}
+.proof-card:hover {
+  border-color: rgba(255, 255, 255, 0.38);
+  box-shadow: 0 44px 114px rgba(10, 5, 20, 0.5);
+}
+.proof-card strong {
+  color: #ffe8b8;
+}
+.proof-card p {
+  color: rgba(255, 255, 255, 0.86);
+}
+.proof-orbit,
+.proof-orbit::before,
+.proof-orbit::after {
+  border-color: rgba(255, 255, 255, 0.22);
+}
+

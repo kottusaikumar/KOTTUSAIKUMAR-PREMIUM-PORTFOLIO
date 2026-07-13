@@ -1,0 +1,1098 @@
+/* 04-projects-theme.css
+   Projects/Work section — ring + slider mechanics, project card, base mocha/gem theme.
+   Extracted verbatim from the original src/styles/portfolio.css
+   (lines 1398-2446) — content unchanged, only the file location
+   moved. Import order in index.css matches the original source
+   order exactly; do not reorder these imports, later files rely
+   on cascade order to override earlier ones. */
+
+/* =========================================================
+   PROJECTS — mocha brown, gem motif
+   ========================================================= */
+.work {
+  position: relative;
+  z-index: 10;
+  background:
+    radial-gradient(circle at 50% 52%, rgba(90, 90, 90, 0.12), transparent 38%),
+    linear-gradient(180deg, #151515 0%, #101010 56%, #151515 100%);
+  color: #f8f7f1;
+  padding: clamp(108px, 13vh, 150px) var(--gutter) clamp(64px, 8vh, 90px);
+  overflow: hidden;
+  scroll-margin-top: 110px;
+}
+
+.work-header {
+  text-align: center;
+  margin-bottom: clamp(32px, 5vh, 56px);
+  position: relative;
+  z-index: 1;
+}
+.work-header .section-eyebrow {
+  background: rgba(255, 255, 255, 0.08);
+  color: rgba(248, 247, 241, 0.72);
+  border: 0.5px solid rgba(255, 255, 255, 0.14);
+}
+.work-title {
+  font-family: var(--font-display);
+  font-weight: 500;
+  font-size: clamp(2.2rem, 1.5rem + 2.6vw, 3.6rem);
+  letter-spacing: -0.015em;
+  color: #f8f7f1;
+}
+.work-title strong {
+  font-weight: 700;
+  font-style: italic;
+  color: #f184ff;
+}
+
+.work-ring-toggle {
+  margin: 20px auto 0;
+  min-width: 148px;
+  height: 42px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 9px;
+  border: 1px solid rgba(241, 132, 255, 0.44);
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.08);
+  color: #ffffff;
+  font-family: var(--font-ui);
+  font-size: 0.82rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  cursor: pointer;
+  box-shadow:
+    0 12px 32px rgba(0, 0, 0, 0.28),
+    0 0 24px rgba(241, 132, 255, 0.14);
+  transition:
+    transform 0.25s var(--ease-out),
+    background 0.25s var(--ease-out),
+    border-color 0.25s var(--ease-out),
+    box-shadow 0.25s var(--ease-out);
+}
+.work-ring-toggle:hover,
+.work-ring-toggle:focus-visible {
+  transform: translateY(-2px);
+  background: rgba(241, 132, 255, 0.16);
+  border-color: rgba(241, 132, 255, 0.72);
+  box-shadow:
+    0 16px 40px rgba(0, 0, 0, 0.34),
+    0 0 32px rgba(241, 132, 255, 0.22);
+}
+
+/* Project view controls: animated slider and ring selectors. */
+.work-view-controls {
+  margin: 22px auto 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 18px;
+  min-height: 74px;
+  padding: 0 8px;
+}
+.work-view-controls > span { display: none; }
+.work-view-controls .claw-toggle-wrapper { display: inline-flex !important; }
+.work-view-controls[data-view="ring"] .custom-toggle { animation: project-slider-click .62s cubic-bezier(.2,.8,.3,1); }
+.work-view-controls[data-view="slider"] .claw-toggle-wrapper { animation: project-ring-click .62s cubic-bezier(.2,.8,.3,1); }
+.work-view-controls[data-press="slider"] .custom-toggle > span { animation: project-slider-click .42s cubic-bezier(.2,.8,.3,1); }
+.work-view-controls[data-press="slider"] .claw-toggle-track,
+.work-view-controls[data-press="ring"] .claw-toggle-track { animation: project-ring-click .42s cubic-bezier(.2,.8,.3,1); }
+.project-view-toggle { position: relative; display: inline-flex; align-items: center; justify-content: flex-start; gap: 6px; flex: 0 0 auto; color: rgba(248,247,241,.78); font: 700 .68rem/1 var(--font-ui); letter-spacing: .08em; text-transform: uppercase; cursor: pointer; }
+.project-view-toggle input { position: absolute; opacity: 0; pointer-events: none; }
+.project-view-toggle small { display: block; line-height: 1; }
+.custom-toggle { flex-direction: column; gap: 5px; }
+.custom-toggle > span { position: relative; display: block; width: 84px; height: 48px; flex: 0 0 48px; border: 5px solid #f0f0f1; border-radius: 999px; transform: rotateX(18deg) rotate(8deg); background: #51754d; box-shadow: inset 12px 12px 18px rgba(0,0,0,.5), 0 8px 18px rgba(44,161,60,.35); transition: transform .18s ease, box-shadow .25s ease, background .25s ease; }
+.custom-toggle > span::after { content: ""; position: absolute; top: 4px; left: 4px; width: 38px; height: 38px; border-radius: 50%; background: radial-gradient(circle at 35% 30%, #fff, #88d1a0 45%, #52a066); box-shadow: 0 0 16px #52a066; transition: transform .55s cubic-bezier(.21,.61,.35,1), box-shadow .25s ease; }
+.custom-toggle input:checked + span { background: #63356d; animation: project-slider-click .48s cubic-bezier(.2,.8,.3,1); }
+.custom-toggle input:checked + span::after { transform: translateX(38px); box-shadow: 0 0 26px #88d1a0, 0 0 8px #fff inset; }
+.custom-toggle:active > span { transform: rotateX(18deg) rotate(8deg) scale(.9); box-shadow: inset 12px 12px 18px rgba(0,0,0,.6), 0 2px 8px rgba(44,161,60,.6); }
+.claw-toggle-wrapper { width: 132px; height: 52px; flex-direction: column; gap: 5px; }
+.claw-toggle-track { position: relative; width: 132px; height: 50px; flex: 0 0 50px; display: block; overflow: hidden; border: 2px solid #3b4055; border-radius: 999px; background: linear-gradient(180deg,#151724,#25283a); box-shadow: inset 0 5px 10px rgba(0,0,0,.65), 0 7px 16px rgba(0,0,0,.35); transition: transform .2s ease, box-shadow .25s ease; }
+.claw-toggle-wrapper:active .claw-toggle-track { transform: scale(.9); box-shadow: inset 0 7px 13px rgba(0,0,0,.72), 0 2px 8px rgba(0,229,255,.42); }
+.claw-toggle-slot { position: absolute; left: 20px; right: 20px; top: 22px; height: 5px; border-radius: 5px; background: #08090d; }
+.claw-toggle-slot-fill { display: block; width: 0; height: 100%; border-radius: inherit; background: linear-gradient(90deg,#ff0055,#ff4081); box-shadow: 0 0 8px #ff0055; transition: width 1s ease, background .4s ease; }
+.claw-toggle-core { position: absolute; top: 3px; left: 3px; width: 40px; height: 40px; border-radius: 50%; display: grid; place-items: center; background: #303449; box-shadow: 0 3px 8px rgba(0,0,0,.6); transition: left 1s cubic-bezier(.4,0,.2,1); }
+.claw-toggle-core-gear { position: absolute; inset: 3px; border: 2px dashed #69708d; border-radius: 50%; animation: project-control-spin 4s linear infinite; }
+.claw-toggle-core-inner { width: 18px; height: 18px; border-radius: 50%; background: #ff0055; box-shadow: 0 0 10px #ff0055; }
+.claw-machine-wrapper { position: absolute; right: -32px; top: 0; width: 48px; height: 100%; transition: right 1s ease; }
+.claw-machine-arm { position: absolute; left: 0; top: 20px; width: 48px; height: 4px; background: #777e9d; }
+.claw-machine-joint { position: absolute; left: 42px; top: 15px; width: 14px; height: 14px; border-radius: 50%; background: #ff0055; box-shadow: 0 0 8px #ff0055; }
+.claw-toggle-input:checked ~ .claw-toggle-track .claw-toggle-slot-fill { width: 100%; background: linear-gradient(90deg,#0088ff,#00e5ff); }
+.claw-toggle-input:checked ~ .claw-toggle-track { animation: project-ring-click .55s cubic-bezier(.2,.8,.3,1); }
+.claw-toggle-input:checked ~ .claw-toggle-track .claw-toggle-core { left: 89px; }
+.claw-toggle-input:checked ~ .claw-toggle-track .claw-toggle-core-gear { border-color: #ffe08a; }
+.claw-toggle-input:checked ~ .claw-toggle-track .claw-toggle-core-inner { background: #00e5ff; box-shadow: 0 0 8px #00e5ff; }
+.claw-toggle-input:checked ~ .claw-toggle-track .claw-machine-wrapper { right: 2px; }
+@keyframes project-control-spin { to { transform: rotate(360deg); } }
+@keyframes project-slider-click {
+  0% { transform: rotateX(18deg) rotate(8deg) scale(.9); filter: brightness(1); }
+  45% { transform: rotateX(18deg) rotate(8deg) scale(1.08); filter: brightness(1.3); }
+  100% { transform: rotateX(18deg) rotate(8deg) scale(1); filter: brightness(1); }
+}
+@keyframes project-ring-click {
+  0% { transform: scale(.88); filter: brightness(1); box-shadow: inset 0 8px 14px rgba(0,0,0,.78), 0 2px 8px rgba(0,229,255,.3); }
+  35% { transform: scale(1.1); filter: brightness(1.45); box-shadow: inset 0 3px 7px rgba(0,0,0,.4), 0 0 30px rgba(0,229,255,.8); }
+  62% { transform: scale(.97); filter: brightness(1.12); }
+  100% { transform: scale(1); filter: brightness(1); box-shadow: inset 0 5px 10px rgba(0,0,0,.65), 0 7px 16px rgba(0,0,0,.35); }
+}
+@media (max-width: 560px) {
+  .work-view-controls { gap: 12px; min-height: 64px; }
+  .custom-toggle > span { width: 72px; height: 42px; flex-basis: 42px; border-width: 4px; }
+  .custom-toggle > span::after { width: 32px; height: 32px; top: 3px; left: 3px; }
+  .custom-toggle input:checked + span::after { transform: translateX(32px); }
+  .claw-toggle-wrapper { width: 108px; height: 46px; }
+  .claw-toggle-track { width: 108px; height: 44px; flex-basis: 44px; }
+  .claw-toggle-slot { left: 14px; right: 14px; top: 17px; }
+  .claw-toggle-core { width: 34px; height: 34px; top: 2px; left: 2px; }
+  .claw-toggle-input:checked ~ .claw-toggle-track .claw-toggle-core { left: 70px; }
+  .claw-machine-arm { top: 17px; width: 42px; }
+  .claw-machine-joint { left: 36px; top: 12px; width: 12px; height: 12px; }
+}
+
+.work-viewport {
+  width: 100%;
+  min-height: clamp(430px, 54vh, 540px);
+  position: relative;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding-top: clamp(12px, 3vh, 34px);
+  overflow: hidden;
+  /* Reference orbit's side cards fade toward the dark background near
+     the left/right edges of frame rather than getting cut off sharply —
+     this mask reproduces that soft entry/exit instead of a hard clip. */
+  -webkit-mask-image: linear-gradient(
+    90deg,
+    transparent 0%,
+    #000 16%,
+    #000 84%,
+    transparent 100%
+  );
+  mask-image: linear-gradient(
+    90deg,
+    transparent 0%,
+    #000 16%,
+    #000 84%,
+    transparent 100%
+  );
+}
+
+.work-track {
+  --w: clamp(88px, 8vw, 124px);
+  --h: clamp(138px, 12vw, 188px);
+  position: relative;
+  width: min(100%, 1120px);
+  height: clamp(310px, 35vw, 420px);
+  margin-top: clamp(-260px, -18vw, -210px);
+  transform-style: flat;
+}
+
+/* Multi-column scroll-linked parallax grid (replaces the old
+   auto-scrolling horizontal marquee) — reference: the foodtruck
+   site's staggered image-column gallery, where each column drifts
+   vertically at its own speed as the section scrolls past. The
+   vertical drift itself is driven by GSAP/ScrollTrigger in
+   Portfolio.tsx (`.work-col` tweens); this file only lays the
+   columns out and gives them the alternating start-offset that
+   makes the grid read as staggered/brick-like even before any
+   scroll has happened. `overflow: hidden` on `.work-grid` clips the
+   parallax travel so columns never visibly poke past the section's
+   top/bottom edge. */
+.work-grid {
+  max-width: 1320px;
+  margin: 0 auto;
+  position: relative;
+  z-index: 1;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 28px;
+  overflow: hidden;
+  padding: 6px 2px;
+}
+
+.work-col {
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
+  will-change: transform;
+}
+/* Alternating vertical offset — odd columns start lower, so the
+   three columns read as a staggered brick grid at rest, and the
+   scroll-driven parallax (opposite direction per column) then makes
+   them slide past each other instead of just moving in lockstep. */
+.work-col:nth-child(2) {
+  margin-top: 56px;
+}
+.work-col:nth-child(3) {
+  margin-top: 22px;
+}
+
+.work-card {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: var(--w);
+  height: var(--h);
+  display: flex;
+  flex-direction: column;
+  background:
+    radial-gradient(circle at 50% 54%, rgba(0, 0, 0, 0.4), transparent 22%),
+    linear-gradient(135deg, rgba(255, 255, 255, 0.52), rgba(255, 255, 255, 0.08) 44%),
+    radial-gradient(
+      circle at 50% 0%,
+      rgba(var(--color-card), 0.94) 0%,
+      rgba(var(--color-card), 0.48) 52%,
+      rgba(var(--color-card), 0.78) 100%
+    );
+  border: 2px solid rgba(var(--color-card), 0.96);
+  border-radius: 14px;
+  overflow: hidden;
+  box-shadow:
+    0 28px 70px rgba(0, 0, 0, 0.48),
+    0 0 40px rgba(var(--color-card), 0.44),
+    inset 0 0 46px rgba(255, 255, 255, 0.1),
+    inset 0 -38px 70px rgba(0, 0, 0, 0.22);
+  opacity: 0.92;
+  backdrop-filter: blur(16px) saturate(1.45);
+  -webkit-backdrop-filter: blur(16px) saturate(1.45);
+  /* Cards stay camera-facing ("billboarded") and only move along the
+     ring's elliptical X/Y path — matching the reference orbit, whose
+     cards never keystone/rotate, they just grow, brighten, and sharpen
+     as they approach the front. See PortfolioPage.tsx applyOrbit for
+     how --orbit-x/y/scale/opacity/blur are computed each frame. */
+  transform: translate(-50%, -50%) translate3d(var(--orbit-x, 0), var(--orbit-y, 0), 0)
+    scale(var(--orbit-scale, 1));
+  opacity: var(--orbit-opacity, 0.92);
+  z-index: var(--orbit-z, 1);
+  backface-visibility: hidden;
+  transition:
+    box-shadow 0.35s var(--ease-out),
+    border-color 0.35s var(--ease-out),
+    opacity 0.35s var(--ease-out);
+  will-change: transform, opacity;
+}
+
+/* Static resting frame for the 10-card ring — used for the very first
+   paint before the rAF loop in PortfolioPage.tsx takes over, and as
+   the permanent frame when prefers-reduced-motion is set (see
+   applyOrbit's early-return there, which calls this same layout once
+   and never starts the rotation). Values are the same elliptical
+   billboard math the JS uses (cards evenly spaced 36deg apart around
+   the ellipse, no rotation — see the .work-card transform above),
+   just pre-computed, so there's no visible jump when JS attaches. */
+.work-card:nth-child(1) {
+  --orbit-x: 0px;
+  --orbit-y: -148px;
+  --orbit-scale: 0.62;
+  --orbit-opacity: 0.4;
+  --orbit-z: 0;
+}
+.work-card:nth-child(2) {
+  --orbit-x: 246px;
+  --orbit-y: -120px;
+  --orbit-scale: 0.668;
+  --orbit-opacity: 0.457;
+  --orbit-z: 10;
+}
+.work-card:nth-child(3) {
+  --orbit-x: 398px;
+  --orbit-y: -46px;
+  --orbit-scale: 0.793;
+  --orbit-opacity: 0.607;
+  --orbit-z: 35;
+}
+.work-card:nth-child(4) {
+  --orbit-x: 398px;
+  --orbit-y: 48px;
+  --orbit-scale: 0.947;
+  --orbit-opacity: 0.793;
+  --orbit-z: 65;
+}
+.work-card:nth-child(5) {
+  --orbit-x: 246px;
+  --orbit-y: 122px;
+  --orbit-scale: 1.072;
+  --orbit-opacity: 0.943;
+  --orbit-z: 90;
+}
+.work-card:nth-child(6) {
+  --orbit-x: 0px;
+  --orbit-y: 148px;
+  --orbit-scale: 1.12;
+  --orbit-opacity: 1;
+  --orbit-z: 100;
+}
+.work-card:nth-child(7) {
+  --orbit-x: -246px;
+  --orbit-y: 122px;
+  --orbit-scale: 1.072;
+  --orbit-opacity: 0.943;
+  --orbit-z: 90;
+}
+.work-card:nth-child(8) {
+  --orbit-x: -398px;
+  --orbit-y: 48px;
+  --orbit-scale: 0.947;
+  --orbit-opacity: 0.793;
+  --orbit-z: 65;
+}
+.work-card:nth-child(9) {
+  --orbit-x: -398px;
+  --orbit-y: -46px;
+  --orbit-scale: 0.793;
+  --orbit-opacity: 0.607;
+  --orbit-z: 35;
+}
+.work-card:nth-child(10) {
+  --orbit-x: -246px;
+  --orbit-y: -120px;
+  --orbit-scale: 0.668;
+  --orbit-opacity: 0.457;
+  --orbit-z: 10;
+}
+
+.work-card--glass {
+  display: block;
+  /* Set continuously by the ring's rAF loop (Portfolio.tsx applyOrbit) —
+     back-of-ring cards get a soft blur, front cards stay crisp, echoing
+     the depth-of-field look in the reference orbit animation. */
+  filter: blur(var(--orbit-blur, 0px));
+}
+.work-card--glass::before,
+.work-card--glass::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+.work-card--glass::before {
+  background:
+    radial-gradient(circle at 50% 55%, rgba(0, 0, 0, 0.34), transparent 19%),
+    radial-gradient(circle at 42% 22%, rgba(255, 255, 255, 0.24), transparent 26%);
+  filter: blur(0.3px);
+}
+.work-card--glass::after {
+  inset: 1px;
+  border-radius: 12px;
+  background: linear-gradient(
+    135deg,
+    rgba(255, 255, 255, 0.26),
+    transparent 28%,
+    rgba(255, 255, 255, 0.1) 70%,
+    transparent
+  );
+  mix-blend-mode: screen;
+  opacity: 0.65;
+}
+/* The ring cards are much smaller than the old slider cards the
+   .work-card-media/body/link rules were originally sized for, so
+   scale those down to fit the orbit thumbnails. */
+.work-card--glass .work-card-media,
+.work-card--glass .work-card-body {
+  position: absolute;
+}
+.work-card--glass .work-card-media {
+  inset: 0;
+  z-index: 0;
+}
+.work-card--glass .work-card-body {
+  padding: 8px;
+  gap: 0;
+}
+.work-card--glass .work-card-title-row {
+  gap: 6px;
+}
+.work-card--glass .work-card-link {
+  width: 18px;
+  height: 18px;
+}
+/* Ring cards: show the project video at full clarity (no wash-out
+   blend) — the colored border/glow on .work-card already carries
+   the per-project accent, so the video itself doesn't need to be
+   dimmed or color-blended to read as "branded". */
+.work-card--glass .work-card-media video {
+  opacity: 1;
+  mix-blend-mode: normal;
+  filter: none;
+}
+.work-card--decor {
+  display: grid;
+  place-items: center;
+  background:
+    radial-gradient(circle at 50% 45%, rgba(var(--color-card), 0.58), transparent 36%),
+    linear-gradient(145deg, rgba(255, 255, 255, 0.22), rgba(255, 255, 255, 0.04)),
+    rgba(8, 8, 10, 0.74);
+}
+.work-card-decor-content {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  min-height: 100%;
+  width: 100%;
+  flex-direction: column;
+  justify-content: center;
+  gap: 8px;
+  padding: 14px;
+  color: #fff;
+  text-align: left;
+}
+.work-card-decor-content span {
+  width: fit-content;
+  border: 1px solid rgba(var(--color-card), 0.5);
+  border-radius: 999px;
+  padding: 3px 7px;
+  color: rgb(var(--color-card));
+  font-size: 0.56rem;
+  font-weight: 800;
+  letter-spacing: 0.16em;
+}
+.work-card-decor-content strong {
+  font-family: var(--font-display);
+  font-size: clamp(0.78rem, 0.66rem + 0.4vw, 1rem);
+  font-weight: 700;
+  line-height: 1.05;
+}
+.work-card-decor-content small {
+  color: rgba(255, 255, 255, 0.62);
+  font-size: 0.62rem;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+.work-card:hover {
+  transform: translate(-50%, -50%) translate3d(var(--orbit-x, 0), var(--orbit-y, 0), 0)
+    scale(calc(var(--orbit-scale, 1) * 1.04));
+  box-shadow:
+    0 36px 96px rgba(0, 0, 0, 0.62),
+    0 0 50px rgba(var(--color-card), 0.5),
+    inset 0 0 52px rgba(255, 255, 255, 0.16);
+  border-color: rgba(var(--color-card), 0.95);
+  opacity: 0.96;
+}
+
+.work-slider {
+  width: min(100%, 1180px);
+  height: var(--height);
+  margin: clamp(78px, 10vh, 120px) auto clamp(68px, 9vh, 100px);
+  position: relative;
+  z-index: 1;
+  overflow: hidden;
+  overflow-y: hidden;
+  padding: 0 5vw 14px;
+  scrollbar-width: none;
+}
+.work-slider::-webkit-scrollbar { display: none; }
+.work-slider-list {
+  display: flex;
+  width: max-content;
+  min-width: max-content;
+  height: 100%;
+  position: relative;
+  gap: clamp(16px, 2vw, 28px);
+  align-items: center;
+  animation: projectSliderLoop 42s linear infinite;
+  will-change: transform;
+}
+.work-slider:hover .work-slider-list,
+.work-slider:focus-within .work-slider-list {
+  animation-play-state: paused;
+}
+@keyframes projectSliderLoop {
+  from { transform: translate3d(0, 0, 0); }
+  to { transform: translate3d(-50%, 0, 0); }
+}
+.work-slider-item {
+  width: var(--width);
+  height: var(--height);
+  position: relative;
+  left: auto;
+  flex: 0 0 var(--width);
+  transition: filter 0.45s var(--ease-out), transform 0.45s var(--ease-out);
+}
+.work-slider .work-slider-item:hover {
+  transform: translateY(-6px);
+}
+.work-slider-card {
+  width: 100%;
+  height: 100%;
+  padding: 18px;
+  border: 1px solid rgba(255, 255, 255, 0.62);
+  border-radius: 8px;
+  box-shadow: 0 18px 48px rgba(0, 0, 0, 0.28);
+  color: #fff;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 12px;
+  position: relative;
+  overflow: hidden;
+}
+/* The project video sits as a dimmed backdrop behind the card's
+   text/actions — it fills the card, and the ::after scrim plus the
+   card's own dark gradient background (set inline per-project) keep
+   the title and description readable on top of it. */
+.work-slider-card .work-card-media {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+}
+.work-slider-card .work-card-media video {
+  opacity: 0.5;
+}
+.work-slider-card::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(circle at 50% 54%, rgba(255, 255, 255, 0.18), transparent 28%),
+    linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.18), transparent);
+  opacity: 0.56;
+  pointer-events: none;
+}
+.work-slider-card h3,
+.work-slider-card p,
+.work-slider-card-actions {
+  position: relative;
+  z-index: 1;
+}
+.work-slider-card h3 {
+  margin: 0;
+  font-family: var(--font-ui);
+  font-size: 1.02rem;
+  font-weight: 800;
+  line-height: 1.28;
+  color: #fff;
+}
+.work-slider-card p {
+  margin: 0;
+  font-size: 0.86rem;
+  font-weight: 650;
+  line-height: 1.45;
+  color: rgba(255, 255, 255, 0.9);
+  display: -webkit-box;
+  -webkit-line-clamp: 5;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+.work-slider-card-actions {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  display: flex;
+  gap: 8px;
+}
+.work-slider-card .work-card-info-btn,
+.work-slider-card .work-card-link {
+  width: 30px;
+  height: 30px;
+  border-color: rgba(255, 255, 255, 0.68);
+  background: rgba(0, 0, 0, 0.12);
+  color: #fff;
+}
+.work-slider-card .work-card-link:hover,
+.work-slider-card .work-card-info-btn:hover,
+.work-slider-card .work-card-info-btn:focus-visible {
+  background: rgba(0, 0, 0, 0.28);
+  border-color: #fff;
+}
+
+/* ============================================================
+   Slider "product card" — light theme, matches the reference
+   screenshot: video thumbnail on top, white body below with
+   title, a Focus row, a Highlight block with a colored underline,
+   and a circular external-link button.
+   ============================================================ */
+.project-card {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  border-radius: 18px;
+  overflow: hidden;
+  background: #ffffff;
+  box-shadow:
+    0 24px 60px rgba(0, 0, 0, 0.4),
+    0 2px 0 rgba(255, 255, 255, 0.06) inset;
+}
+
+.project-card-media {
+  position: relative;
+  flex: 0 0 auto;
+  width: 100%;
+  height: 44%;
+  background: #05070d;
+  overflow: hidden;
+}
+.project-card-media video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.project-card-body {
+  flex: 1 1 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  padding: 20px 20px 18px;
+  min-height: 0;
+}
+
+.project-card-title-row {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 10px;
+}
+.project-card-title {
+  margin: 0;
+  flex: 1 1 auto;
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 1.08rem;
+  line-height: 1.28;
+  color: #14141a;
+  text-align: left;
+}
+.project-card-info-btn {
+  flex: 0 0 auto;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 26px;
+  height: 26px;
+  margin-top: 2px;
+  border-radius: 50%;
+  border: 1px solid rgba(20, 20, 26, 0.18);
+  background: transparent;
+  color: rgba(20, 20, 26, 0.7);
+  cursor: pointer;
+  transition:
+    background 0.2s var(--ease-out),
+    color 0.2s var(--ease-out),
+    border-color 0.2s var(--ease-out);
+}
+.project-card-info-btn:hover,
+.project-card-info-btn:focus-visible {
+  background: rgba(20, 20, 26, 0.06);
+  border-color: rgba(20, 20, 26, 0.32);
+  color: #14141a;
+}
+.project-card-info-wrap { position: relative; display: inline-flex; flex: 0 0 auto; }
+.project-card { overflow: visible; }
+.project-card-media { overflow: hidden; border-radius: 18px 18px 0 0; }
+.project-card-body { border-radius: 0 0 18px 18px; }
+.project-card-tooltip {
+  position: absolute;
+  z-index: 20;
+  right: 0;
+  bottom: calc(100% + 10px);
+  width: 230px;
+  padding: 12px 14px;
+  border: 1px solid rgba(20,20,26,.12);
+  border-radius: 14px;
+  background: linear-gradient(135deg, rgba(28,28,36,.96), rgba(14,14,20,.96));
+  color: rgba(255,255,255,.86);
+  box-shadow: 0 14px 32px rgba(0,0,0,.24), 0 0 22px rgba(120,8,208,.16);
+  font: 600 .72rem/1.45 var(--font-ui);
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(7px) scale(.97);
+  pointer-events: none;
+  transition: opacity .22s var(--ease-out), transform .22s var(--ease-out), visibility .22s;
+}
+.project-card-tooltip::after { content: ""; position: absolute; right: 9px; bottom: -5px; width: 10px; height: 10px; background: #17171f; border-right: 1px solid rgba(255,255,255,.1); border-bottom: 1px solid rgba(255,255,255,.1); transform: rotate(45deg); }
+.project-card-info-wrap:hover .project-card-tooltip,
+.project-card-info-wrap:focus-within .project-card-tooltip { opacity: 1; visibility: visible; transform: translateY(0) scale(1); }
+
+.project-card-row {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 11px 0;
+  border-top: 1px solid rgba(20, 20, 26, 0.1);
+  border-bottom: 1px solid rgba(20, 20, 26, 0.1);
+}
+.project-card-label {
+  font-family: var(--font-ui);
+  font-size: 0.74rem;
+  font-weight: 700;
+  color: rgba(20, 20, 26, 0.55);
+}
+.project-card-value {
+  font-family: var(--font-ui);
+  font-size: 0.86rem;
+  font-weight: 700;
+}
+
+.project-card-highlight-row {
+  flex: 1 1 auto;
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 14px;
+  min-height: 0;
+}
+.project-card-highlight-col {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+.project-card-highlight-text {
+  margin: 6px 0 0;
+  font-family: var(--font-ui);
+  font-size: 0.86rem;
+  font-weight: 600;
+  line-height: 1.4;
+  color: #1c1c22;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+.project-card-underline {
+  display: block;
+  width: 44px;
+  height: 3px;
+  border-radius: 2px;
+  margin-top: 10px;
+}
+.project-card-link {
+  flex: 0 0 auto;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  border: 1px solid rgba(20, 20, 26, 0.2);
+  background: transparent;
+  transition:
+    background 0.25s var(--ease-out),
+    transform 0.25s var(--ease-spring);
+}
+.project-card-link:hover {
+  transform: translateY(-2px) rotate(45deg);
+  background: rgba(20, 20, 26, 0.06);
+}
+.project-card-link--animated { width: auto; min-width: 112px; height: 38px; padding: 5px 12px 5px 6px; gap: 8px; border: 0; border-radius: 999px; overflow: hidden; background: var(--clr); color: #fff; font: 700 .7rem/1 var(--font-ui); letter-spacing: .01em; }
+.project-card-link-icon { position: relative; width: 27px; height: 27px; flex: 0 0 27px; display: grid; place-items: center; border-radius: 50%; color: var(--clr); background: #fff; overflow: hidden; }
+.project-card-link-icon svg { width: 10px; height: 11px; transition: transform .32s ease-in-out; }
+.project-card-link-icon-copy { position: absolute; transform: translate(-150%, 150%); }
+.project-card-link-label { position: relative; z-index: 1; white-space: nowrap; }
+.project-card-link--animated:hover { transform: translateY(-2px); background: #111; color: #fff; }
+.project-card-link--animated:hover .project-card-link-icon { color: #111; }
+.project-card-link--animated:hover .project-card-link-icon > svg:first-child { transform: translate(150%, -150%); }
+.project-card-link--animated:hover .project-card-link-icon-copy { transform: translate(0); transition-delay: .1s; }
+
+.project-card-description {
+  margin: 0;
+  flex: 1 1 auto;
+  max-height: 178px;
+  padding-right: 10px;
+  font-family: var(--font-ui);
+  font-size: 0.86rem;
+  line-height: 1.55;
+  color: rgba(20, 20, 26, 0.78);
+  display: block;
+  overflow-x: hidden;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(35, 35, 42, 0.48) rgba(35, 35, 42, 0.08);
+}
+
+.project-card-description::-webkit-scrollbar {
+  width: 6px;
+}
+
+.project-card-description::-webkit-scrollbar-track {
+  border-radius: 999px;
+  background: rgba(35, 35, 42, 0.08);
+}
+
+.project-card-description::-webkit-scrollbar-thumb {
+  border-radius: 999px;
+  background: linear-gradient(180deg, rgba(67, 255, 0, 0.72), rgba(0, 180, 176, 0.75));
+}
+
+.project-card-description::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(180deg, rgba(67, 255, 0, 0.95), rgba(0, 210, 205, 0.95));
+}
+
+@media (max-width: 700px) {
+  .project-card-media {
+    height: 38%;
+  }
+  .project-card-body {
+    padding: 16px 16px 14px;
+    gap: 10px;
+  }
+}
+
+.work-card-media {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.2);
+  overflow: hidden;
+}
+.work-card-media video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  opacity: 0.62;
+  mix-blend-mode: screen;
+  filter: saturate(1.2) contrast(1.05);
+}
+
+.work-card-media::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  background:
+    radial-gradient(circle at 50% 50%, rgba(0, 0, 0, 0.22), transparent 32%),
+    linear-gradient(180deg, rgba(var(--color-card), 0.22), transparent);
+  pointer-events: none;
+}
+
+.work-card-body {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 2;
+  padding: 12px 12px 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  background: linear-gradient(180deg, transparent, rgba(0, 0, 0, 0.62));
+}
+
+.work-card-name {
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: clamp(0.62rem, 0.5rem + 0.34vw, 0.82rem);
+  line-height: 1.18;
+  color: #ffffff;
+  text-shadow: 0 2px 14px rgba(0, 0, 0, 0.55);
+  min-height: 0;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.work-card-title-row {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 10px;
+}
+.work-card-title-row .work-card-name {
+  flex: 1 1 auto;
+}
+
+/* Small "i" info toggle + its hover tooltip. The tooltip is a plain
+   CSS popup (no JS state) — it just previews what clicking will do
+   before the visitor commits to opening the description. */
+.work-card-info-btn {
+  position: relative;
+  flex: 0 0 auto;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 22px;
+  height: 22px;
+  margin-top: 2px;
+  border-radius: 50%;
+  border: 1px solid rgba(var(--color-card), 0.62);
+  background: rgba(0, 0, 0, 0.18);
+  color: #ffffff;
+  cursor: pointer;
+  transition:
+    background 0.2s var(--ease-out),
+    color 0.2s var(--ease-out),
+    border-color 0.2s var(--ease-out);
+}
+.work-card-info-btn:hover,
+.work-card-info-btn:focus-visible {
+  background: rgba(var(--color-card), 0.28);
+  color: #fff;
+  border-color: rgba(var(--color-card), 0.95);
+}
+
+.work-card-info-tip {
+  position: absolute;
+  bottom: calc(100% + 9px);
+  right: 0;
+  z-index: 5;
+  white-space: nowrap;
+  padding: 6px 11px;
+  border-radius: 7px;
+  background: rgba(12, 12, 12, 0.92);
+  color: #ffffff;
+  font-family: var(--font-ui);
+  font-size: 0.72rem;
+  font-weight: 500;
+  letter-spacing: 0.01em;
+  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.36);
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(4px);
+  transition:
+    opacity 0.18s var(--ease-out),
+    transform 0.18s var(--ease-out),
+    visibility 0.18s;
+  pointer-events: none;
+}
+.work-card-info-tip::after {
+  content: "";
+  position: absolute;
+  top: 100%;
+  right: 9px;
+  width: 8px;
+  height: 8px;
+  background: rgba(12, 12, 12, 0.92);
+  transform: translateY(-50%) rotate(45deg);
+}
+.work-card-info-btn:hover .work-card-info-tip,
+.work-card-info-btn:focus-visible .work-card-info-tip {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0);
+}
+
+.work-card-description {
+  display: none;
+  font-size: 0.86rem;
+  line-height: 1.55;
+  color: rgba(255, 255, 255, 0.78);
+}
+
+.work-card-row {
+  display: none;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+  padding-top: 12px;
+  border-top: 1px solid rgba(255, 255, 255, 0.16);
+}
+.work-card-row-bottom {
+  align-items: flex-end;
+}
+
+.work-card-label {
+  display: block;
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: rgba(255, 255, 255, 0.76);
+  margin-bottom: 4px;
+}
+.work-card-value {
+  display: block;
+  font-size: 0.84rem;
+  color: rgba(var(--color-card), 0.98);
+  font-weight: 500;
+}
+.work-card-highlight {
+  color: rgba(255, 255, 255, 0.86);
+  max-width: 22ch;
+}
+
+.work-card-underline {
+  display: block;
+  width: 46px;
+  height: 3px;
+  border-radius: 2px;
+  margin-top: 10px;
+  background: rgba(var(--color-card), 0.92);
+}
+
+.work-card-link {
+  flex: 0 0 auto;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  border: 1px solid rgba(var(--color-card), 0.58);
+  background: rgba(0, 0, 0, 0.16);
+  color: #ffffff;
+  transition:
+    background 0.3s var(--ease-out),
+    transform 0.3s var(--ease-spring),
+    border-color 0.3s var(--ease-out);
+}
+.work-card-link:hover {
+  background: rgba(var(--color-card), 0.24);
+  color: #fff;
+  transform: translateY(-2px) rotate(45deg);
+  border-color: rgba(var(--color-card), 0.95);
+}
+
+/* Fewer grid columns as the viewport narrows — 2 on tablets, 1 on
+   phones, where the column offsets/parallax drift are also switched
+   off below since there's no longer room for columns to visibly
+   pass each other. */
+@media (max-width: 1180px) {
+  .work-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  .work-col:nth-child(3) {
+    margin-top: 0;
+  }
+}
+@media (max-width: 700px) {
+  .work-grid {
+    grid-template-columns: 1fr;
+  }
+  .work-col:nth-child(2),
+  .work-col:nth-child(3) {
+    margin-top: 0;
+  }
+}
+
+@media (max-width: 860px) {
+  .work {
+    padding: clamp(86px, 12vh, 118px) var(--gutter)
+      clamp(64px, 10vh, 96px);
+  }
+  .work-viewport {
+    min-height: 360px;
+    padding-top: 20px;
+    overflow: hidden;
+  }
+  .work-track {
+    --w: clamp(66px, 18vw, 96px);
+    --h: clamp(106px, 28vw, 148px);
+    width: min(100%, 640px);
+    height: clamp(260px, 62vw, 340px);
+    margin-top: -70px;
+    display: block;
+  }
+  .work-card,
+  .work-card:hover {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+  }
+}
+
+
+/* Lazy video loading (see LazyProjectVideo): before a project clip has
+   resolved this slot is an empty div sitting in the same spot the
+   <video> will occupy. .work-card-media / .project-card-media already
+   paint a dark fill behind it, so filling 100% keeps that fill (and the
+   card layout) identical whether or not the video has loaded yet. */
+.project-video-slot {
+  display: block;
+  width: 100%;
+  height: 100%;
+}

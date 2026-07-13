@@ -1,0 +1,131 @@
+/* 11-experience-background-checker.css
+   Experience section background — exact checkerboard pattern override.
+   Extracted verbatim from the original src/styles/portfolio.css
+   (lines 4523-4645) — content unchanged, only the file location
+   moved. Import order in index.css matches the original source
+   order exactly; do not reorder these imports, later files rely
+   on cascade order to override earlier ones. */
+
+/* EXPERIENCE BACKGROUND — exact bright checker pattern override */
+.experience::before {
+  background: none !important;
+  opacity: 0 !important;
+}
+
+.experience .experience-pattern-bg {
+  z-index: 0;
+  opacity: 1;
+  mix-blend-mode: normal;
+}
+
+.experience .experience-pattern-bg .experience-pattern-fill {
+  max-width: none;
+  --color1: rgb(108, 231, 221);
+  --color2: rgb(250, 255, 178);
+  background-color: var(--color1);
+  background-image:
+    linear-gradient(
+      45deg,
+      var(--color2) 25%,
+      transparent 25%,
+      transparent 75%,
+      var(--color2) 75%,
+      var(--color2)
+    ),
+    linear-gradient(
+      45deg,
+      var(--color2) 25%,
+      var(--color1) 25%,
+      var(--color1) 75%,
+      var(--color2) 75%,
+      var(--color2)
+    );
+  background-size: 74px 74px;
+  background-position: 0 0, 37px 37px;
+}
+
+.experience-header,
+.experience-list {
+  position: relative;
+  z-index: 3;
+}
+
+.experience-header .section-eyebrow {
+  background: rgba(18, 82, 78, 0.14);
+  color: #12524e;
+  border-color: rgba(18, 82, 78, 0.28);
+}
+
+.experience-title,
+.experience-title strong,
+.experience-company {
+  color: #163b3a;
+  text-shadow: none;
+}
+
+.experience-period {
+  background: rgba(18, 82, 78, 0.12);
+  border-color: rgba(18, 82, 78, 0.24);
+  color: #12524e;
+}
+
+.experience-desc {
+  color: rgba(22, 59, 58, 0.74);
+}
+
+.experience-card {
+  background:
+    linear-gradient(135deg, rgba(255, 255, 255, 0.94), rgba(235, 255, 247, 0.9)),
+    linear-gradient(90deg, rgba(18, 184, 174, 0.14), rgba(255, 238, 132, 0.18)) !important;
+  border: 1px solid rgba(12, 96, 90, 0.24) !important;
+  box-shadow:
+    0 28px 80px rgba(9, 77, 72, 0.22),
+    inset 0 1px 0 rgba(255, 255, 255, 0.86) !important;
+  backdrop-filter: blur(2px) saturate(1.05);
+  -webkit-backdrop-filter: blur(2px) saturate(1.05);
+}
+
+.experience-card:hover {
+  background:
+    linear-gradient(135deg, rgba(255, 255, 255, 0.98), rgba(232, 255, 247, 0.94)),
+    linear-gradient(90deg, rgba(18, 184, 174, 0.18), rgba(255, 238, 132, 0.22)) !important;
+  border-color: rgba(12, 96, 90, 0.42) !important;
+  box-shadow:
+    0 34px 96px rgba(9, 77, 72, 0.28),
+    inset 0 1px 0 rgba(255, 255, 255, 0.9) !important;
+}
+
+.experience-title {
+  color: #073b3a !important;
+}
+
+.experience-title strong {
+  background: linear-gradient(90deg, #005f73 0%, #0a9396 42%, #ca8a04 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent !important;
+  text-shadow: none;
+}
+
+.experience-company {
+  background: linear-gradient(90deg, #053b3d 0%, #007f7a 48%, #9a6b00 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent !important;
+  font-weight: 800;
+}
+
+.experience-desc {
+  color: #143f3d !important;
+  font-weight: 560;
+  text-shadow: 0 1px 0 rgba(255, 255, 255, 0.7);
+}
+
+.experience-period {
+  background: linear-gradient(90deg, rgba(0, 127, 122, 0.16), rgba(250, 255, 178, 0.78)) !important;
+  border-color: rgba(0, 95, 94, 0.34) !important;
+  color: #005f5d !important;
+  font-weight: 850;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.72);
+}
+

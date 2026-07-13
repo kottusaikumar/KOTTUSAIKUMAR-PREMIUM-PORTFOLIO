@@ -1,0 +1,106 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Kottu Saikumar Portfolio — Full-Stack AI Developer</title>
+    <meta
+      name="description"
+      content="Kottu Saikumar Portfolio — Full-Stack AI Developer based in Hyderabad. RAG systems, ML pipelines, computer vision, and full-stack products built from first principles."
+    />
+    <meta name="author" content="Kottu Saikumar" />
+    <meta
+      property="og:title"
+      content="Kottu Saikumar Portfolio — Full-Stack AI Developer"
+    />
+    <meta
+      property="og:description"
+      content="RAG systems, ML pipelines, computer vision, and full-stack products built from first principles."
+    />
+    <meta property="og:type" content="website" />
+    <meta name="twitter:card" content="summary" />
+    <meta name="twitter:site" content="@433Saikumar" />
+    <link rel="canonical" href="https://kottusaikumar.github.io/KOTTUSAIKUMAR-PREMIUM-PORTFOLIO/" />
+
+    <!--
+      Structured data: gives search engines and AI agents/crawlers a
+      clean, unambiguous machine-readable summary of who this site is
+      about, instead of requiring them to infer it from styled text
+      inside a client-rendered React tree.
+    -->
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "Person",
+        "name": "Kottu Saikumar",
+        "jobTitle": "Full-Stack AI Developer",
+        "url": "https://kottusaikumar.github.io/KOTTUSAIKUMAR-PREMIUM-PORTFOLIO/",
+        "sameAs": [
+          "https://github.com/kottusaikumar",
+          "https://www.linkedin.com/in/sai-kumar-10541b269",
+          "https://x.com/433Saikumar"
+        ],
+        "address": {
+          "@type": "PostalAddress",
+          "addressLocality": "Hyderabad",
+          "addressCountry": "IN"
+        },
+        "description": "Full-Stack AI Developer building RAG systems, ML pipelines, computer vision, and full-stack products from first principles."
+      }
+    </script>
+
+    <link rel="icon" type="image/png" href="%BASE_URL%favicon.png?v=ks1" />
+    <link rel="shortcut icon" href="%BASE_URL%favicon.ico?v=ks1" />
+    <link rel="apple-touch-icon" href="%BASE_URL%apple-touch-icon.png?v=ks1" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link
+      rel="preconnect"
+      href="https://fonts.gstatic.com"
+      crossorigin="anonymous"
+    />
+    <!--
+      Same stylesheet, same URL, same final fonts — only the loading
+      strategy changes. A plain <link rel="stylesheet"> to a cross-origin
+      host blocks CSSOM construction (and therefore first paint) on a
+      network round trip. Loading it as a non-blocking "preload" and
+      swapping its rel to "stylesheet" once fetched (the standard
+      loadCSS-free pattern) lets the page paint immediately with fallback
+      fonts and swap to the webfonts a moment later. <noscript> keeps this
+      identical (render-blocking) for the no-JS case.
+    -->
+    <link
+      rel="preload"
+      as="style"
+      href="https://fonts.googleapis.com/css2?family=Anton&family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,500;0,9..144,600;0,9..144,700;0,9..144,900;1,9..144,400;1,9..144,500&family=Inter:wght@400;500;600;700;800&display=swap"
+      onload="this.onload=null;this.rel='stylesheet'"
+    />
+    <noscript>
+      <link
+        rel="stylesheet"
+        href="https://fonts.googleapis.com/css2?family=Anton&family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,500;0,9..144,600;0,9..144,700;0,9..144,900;1,9..144,400;1,9..144,500&family=Inter:wght@400;500;600;700;800&display=swap"
+      />
+    </noscript>
+
+    <!--
+      LCP-critical: the hero's first character image (the "Full-Stack
+      AI Developer" slide, always active on mount). It's a same-origin
+      local asset now (public/images/hero/), so no preconnect is
+      needed — just start the fetch itself as early as possible,
+      before React has even mounted. `imagesrcset`/`imagesizes` mirror
+      the <picture>'s AVIF <source> in Hero.tsx so the browser
+      preloads the same responsive candidate it will actually use
+      instead of guessing.
+    -->
+    <link
+      rel="preload"
+      as="image"
+      imagesrcset="%BASE_URL%images/hero/full-stack-ai-developer-480w.avif 480w, %BASE_URL%images/hero/full-stack-ai-developer-900w.avif 900w, %BASE_URL%images/hero/full-stack-ai-developer-1350w.avif 1350w, %BASE_URL%images/hero/full-stack-ai-developer-1800w.avif 1800w"
+      imagesizes="(max-width: 640px) 60vw, 45vw"
+      type="image/avif"
+    />
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>

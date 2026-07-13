@@ -1,0 +1,25 @@
+/* 14-projects-slider-theme.css
+   Slider-only Projects theme (the ring view keeps its original dark scene).
+   Extracted verbatim from the original src/styles/portfolio.css
+   (lines 4825-4841) — content unchanged, only the file location
+   moved. Import order in index.css matches the original source
+   order exactly; do not reorder these imports, later files rely
+   on cascade order to override earlier ones. */
+
+/* Slider-only Projects theme. The ring keeps its original dark scene. */
+.work[data-project-view="slider"] {
+  background: #fff;
+  color: #14141a;
+}
+.work[data-project-view="slider"] .work-title {
+  color: #14141a;
+}
+.work[data-project-view="slider"] .work-header .section-eyebrow {
+  color: rgba(20, 20, 26, .68);
+  background: rgba(20, 20, 26, .045);
+  border-color: rgba(20, 20, 26, .12);
+}
+.work[data-project-view="slider"]::after {
+  background: linear-gradient(90deg, transparent, rgba(20, 20, 26, .2), transparent);
+}
+

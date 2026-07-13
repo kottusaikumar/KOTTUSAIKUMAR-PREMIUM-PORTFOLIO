@@ -1,0 +1,93 @@
+/* 15-intro-loader.css
+   First-load portfolio intro overlay, shown above the page before it reveals.
+   Extracted verbatim from the original src/styles/portfolio.css
+   (lines 4842-4926) — content unchanged, only the file location
+   moved. Import order in index.css matches the original source
+   order exactly; do not reorder these imports, later files rely
+   on cascade order to override earlier ones. */
+
+/* First-load portfolio introduction. It stays above the page for five
+   seconds, then fades away without changing the underlying scroll position. */
+.portfolio-intro {
+  position: fixed;
+  inset: 0;
+  z-index: 10000;
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+  isolation: isolate;
+  color: #fff;
+  background:
+    radial-gradient(circle at 50% 45%, rgba(255, 119, 0, .16), transparent 24rem),
+    radial-gradient(circle at 16% 82%, rgba(0, 61, 16, .65), transparent 28rem),
+    #0c0b0d;
+  opacity: 1;
+  animation: portfolio-intro-lifetime 5.7s forwards;
+  transition: opacity .7s cubic-bezier(.2,.8,.3,1), transform .7s cubic-bezier(.2,.8,.3,1);
+}
+.portfolio-intro.is-exiting { opacity: 0; transform: scale(1.035); pointer-events: none; }
+.portfolio-intro-grid {
+  position: absolute;
+  inset: -30%;
+  z-index: -1;
+  opacity: .38;
+  transform: rotate(-12deg);
+  background-image:
+    linear-gradient(rgba(255, 120, 0, .12) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 120, 0, .12) 1px, transparent 1px);
+  background-size: 56px 56px;
+  mask-image: radial-gradient(ellipse at center, #000 10%, transparent 72%);
+  animation: portfolio-intro-grid-drift 12s linear infinite;
+}
+.portfolio-intro-orb {
+  position: absolute;
+  width: min(52vw, 620px);
+  aspect-ratio: 1;
+  border: 1px solid rgba(255, 133, 0, .36);
+  border-radius: 50%;
+  box-shadow: 0 0 40px rgba(255, 105, 0, .16), inset 0 0 60px rgba(255, 105, 0, .1);
+  animation: portfolio-intro-orbit 5s ease-in-out infinite;
+}
+.portfolio-intro-orb::before,
+.portfolio-intro-orb::after {
+  content: "";
+  position: absolute;
+  inset: 9%;
+  border: 1px solid rgba(255, 222, 178, .22);
+  border-radius: 50%;
+}
+.portfolio-intro-orb::after { inset: 22%; border-color: rgba(0, 61, 16, .72); }
+.portfolio-intro-content { position: relative; display: grid; justify-items: center; gap: 18px; text-align: center; }
+.portfolio-intro-kicker,
+.portfolio-intro-subtitle { margin: 0; font: 700 .75rem/1 var(--font-ui); letter-spacing: .34em; color: #ffb45c; }
+.portfolio-intro-subtitle { color: rgba(255, 247, 235, .72); letter-spacing: .28em; }
+.portfolio-intro-loader {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 126px;
+  padding: 0 20px;
+  font-family: var(--font-display);
+  font-size: clamp(3.3rem, 10vw, 7.8rem);
+  font-weight: 500;
+  letter-spacing: .04em;
+  user-select: none;
+}
+.portfolio-intro-letter { display: inline-block; opacity: 0; color: #fff8ed; text-shadow: 0 0 0 transparent; animation: portfolio-intro-letter 4s infinite linear; }
+.portfolio-intro-scan { position: absolute; inset: 0; z-index: 1; background: transparent; mask: repeating-linear-gradient(90deg, transparent 0, transparent 7px, #000 8px, #000 9px); pointer-events: none; }
+.portfolio-intro-scan::after { content: ""; position: absolute; inset: 0; background: radial-gradient(circle at 50% 50%, #ffd36e 0%, transparent 45%), radial-gradient(circle at 45% 45%, #ff6b00 0%, transparent 45%), radial-gradient(circle at 55% 55%, #003d10 0%, transparent 45%); mask: radial-gradient(circle at 50% 50%, transparent 0%, transparent 10%, #000 26%); animation: portfolio-intro-scan 2s infinite alternate, portfolio-intro-scan-opacity 4s infinite; }
+.portfolio-intro-line { width: min(260px, 48vw); height: 1px; background: linear-gradient(90deg, transparent, #ff7900, #ffe2b8, #ff7900, transparent); box-shadow: 0 0 18px rgba(255, 121, 0, .65); }
+@keyframes portfolio-intro-grid-drift { to { transform: rotate(-12deg) translate3d(56px, 56px, 0); } }
+@keyframes portfolio-intro-lifetime {
+  0%, 87.7% { opacity: 1; visibility: visible; transform: scale(1); }
+  99.9% { opacity: 0; visibility: visible; transform: scale(1.035); }
+  100% { opacity: 0; visibility: hidden; transform: scale(1.035); pointer-events: none; }
+}
+@keyframes portfolio-intro-orbit { 0%, 100% { transform: scale(.9) rotate(0deg); opacity: .7; } 50% { transform: scale(1.04) rotate(12deg); opacity: 1; } }
+@keyframes portfolio-intro-letter { 0% { opacity: 0; } 5% { opacity: 1; text-shadow: 0 0 16px rgba(255, 168, 72, .85); transform: scale(1.08) translateY(-3px); } 20%, 100% { opacity: .18; transform: none; } }
+@keyframes portfolio-intro-scan { from { transform: translateX(-55%); } to { transform: translateX(55%); } }
+@keyframes portfolio-intro-scan-opacity { 0%, 100% { opacity: 0; } 15% { opacity: 1; } 65% { opacity: 0; } }
+@media (max-width: 700px) { .portfolio-intro-loader { font-size: clamp(2.5rem, 13vw, 4.6rem); min-height: 90px; } .portfolio-intro-kicker, .portfolio-intro-subtitle { font-size: .6rem; letter-spacing: .22em; } .portfolio-intro-orb { width: 90vw; } }
+@media (prefers-reduced-motion: reduce) { .portfolio-intro-grid, .portfolio-intro-orb, .portfolio-intro-letter, .portfolio-intro-scan::after { animation: none; } .portfolio-intro { animation: portfolio-intro-lifetime 5.7s forwards; } }
+

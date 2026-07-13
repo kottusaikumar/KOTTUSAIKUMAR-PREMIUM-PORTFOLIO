@@ -1,0 +1,239 @@
+/* 22-whatsapp-submit-animation.css
+   Animated WhatsApp-style submit control on the Contact form.
+   Extracted verbatim from the original src/styles/portfolio.css
+   (lines 5688-5918) — content unchanged, only the file location
+   moved. Import order in index.css matches the original source
+   order exactly; do not reorder these imports, later files rely
+   on cascade order to override earlier ones. */
+
+/* Animated WhatsApp submit control */
+#contact .contact-form .whatsapp-send-button {
+  --wa-green: #00b94f;
+  --wa-green-bright: #00d757;
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  width: 100%;
+  min-width: 0;
+  color: #202420 !important;
+  background: linear-gradient(180deg, #fafbf9, #e9ece8) !important;
+  border: 1px solid rgba(255, 255, 255, 0.72) !important;
+  box-shadow:
+    0 10px 22px rgba(0, 0, 0, 0.22),
+    inset 0 1px 0 rgba(255, 255, 255, 0.9) !important;
+  text-shadow: none;
+  transition:
+    transform 0.22s ease,
+    box-shadow 0.3s ease;
+}
+
+#contact .contact-form .whatsapp-send-button::before,
+#contact .contact-form .whatsapp-send-button::after {
+  content: none;
+}
+
+#contact .contact-form .whatsapp-send-button:hover {
+  transform: translateY(-2px) scale(1.01);
+  box-shadow:
+    0 15px 28px rgba(0, 0, 0, 0.28),
+    0 0 0 1px rgba(0, 215, 87, 0.2),
+    inset 0 1px 0 rgba(255, 255, 255, 0.95) !important;
+}
+
+#contact .contact-form .whatsapp-send-button:active {
+  transform: translate(1px, 1px) scale(0.99);
+}
+
+.whatsapp-send-outline {
+  position: absolute;
+  inset: -3px;
+  overflow: hidden;
+  border-radius: inherit;
+  opacity: 0;
+  z-index: 0;
+  transition: opacity 0.3s ease;
+}
+
+.whatsapp-send-outline::before {
+  content: "";
+  position: absolute;
+  inset: -180%;
+  background: conic-gradient(
+    from 180deg,
+    transparent 55%,
+    rgba(0, 215, 87, 0.95) 76%,
+    rgba(255, 255, 255, 0.95) 84%,
+    transparent 100%
+  );
+  animation: whatsapp-outline-spin 1.8s linear infinite;
+  animation-play-state: paused;
+}
+
+.whatsapp-send-button:hover .whatsapp-send-outline,
+.whatsapp-send-button:focus-visible .whatsapp-send-outline {
+  opacity: 1;
+}
+
+.whatsapp-send-button:hover .whatsapp-send-outline::before,
+.whatsapp-send-button:focus-visible .whatsapp-send-outline::before {
+  animation-play-state: running;
+}
+
+.whatsapp-brand {
+  position: absolute;
+  top: 4px;
+  bottom: 4px;
+  left: 4px;
+  z-index: 4;
+  display: flex;
+  width: 33px;
+  align-items: center;
+  overflow: hidden;
+  border-radius: 999px;
+  color: #fff;
+  background: linear-gradient(135deg, var(--wa-green-bright), var(--wa-green));
+  box-shadow: 2px 2px 9px rgba(0, 0, 0, 0.18);
+  transition: width 0.32s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.whatsapp-brand-sign {
+  display: grid;
+  width: 33px;
+  min-width: 33px;
+  place-items: center;
+}
+
+.whatsapp-brand-sign svg {
+  width: 18px;
+  height: 18px;
+  fill: currentColor;
+}
+
+.whatsapp-brand-text {
+  padding-right: 12px;
+  opacity: 0;
+  font-size: 0.68rem;
+  font-weight: 700;
+  white-space: nowrap;
+  transform: translateX(-7px);
+  transition:
+    opacity 0.2s ease,
+    transform 0.3s ease;
+}
+
+.whatsapp-send-button:hover .whatsapp-brand,
+.whatsapp-send-button:focus-visible .whatsapp-brand {
+  width: 103px;
+}
+
+.whatsapp-send-button:hover .whatsapp-brand-text,
+.whatsapp-send-button:focus-visible .whatsapp-brand-text {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+.whatsapp-send-state {
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  padding-left: 30px;
+  pointer-events: none;
+  transition:
+    opacity 0.24s ease,
+    transform 0.35s ease;
+}
+
+.whatsapp-send-state > svg {
+  width: 18px;
+  height: 18px;
+  overflow: visible;
+  flex: 0 0 auto;
+}
+
+.whatsapp-send-letters {
+  display: flex;
+  align-items: center;
+  font-weight: 750;
+  letter-spacing: -0.015em;
+}
+
+.whatsapp-send-letters > span {
+  display: inline-block;
+  animation: whatsapp-letter-land 0.65s ease both calc(var(--i) * 0.025s);
+}
+
+.whatsapp-send-button:hover .whatsapp-send-state--default .whatsapp-send-letters > span {
+  animation: whatsapp-letter-wave 0.5s ease both calc(var(--i) * 0.025s);
+}
+
+.whatsapp-send-state--sent {
+  opacity: 0;
+  color: #087a39;
+  transform: translateY(-14px) scale(0.92);
+}
+
+.whatsapp-send-button.is-sent .whatsapp-send-state--default {
+  opacity: 0;
+  transform: translateX(85px) rotate(6deg) scale(0.75);
+}
+
+.whatsapp-send-button.is-sent .whatsapp-send-state--default > svg {
+  animation: whatsapp-send-flight 0.75s ease-in forwards;
+}
+
+.whatsapp-send-button.is-sent .whatsapp-send-state--sent {
+  opacity: 1;
+  transform: translateY(0) scale(1);
+}
+
+.whatsapp-send-button.is-sent .whatsapp-send-state--sent > svg {
+  animation: whatsapp-sent-pop 0.85s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+}
+
+@keyframes whatsapp-outline-spin {
+  to { transform: rotate(360deg); }
+}
+
+@keyframes whatsapp-letter-land {
+  from {
+    opacity: 0;
+    filter: blur(4px);
+    transform: translateY(-12px) rotate(-35deg);
+  }
+  to {
+    opacity: 1;
+    filter: blur(0);
+    transform: translateY(0) rotate(0);
+  }
+}
+
+@keyframes whatsapp-letter-wave {
+  0%, 100% { transform: translateY(0); }
+  45% { color: var(--wa-green); transform: translateY(-3px); }
+}
+
+@keyframes whatsapp-send-flight {
+  0% { opacity: 1; transform: translateX(0) rotate(0) scale(1); }
+  65% { opacity: 1; transform: translateX(55px) rotate(42deg) scale(1.5); }
+  100% { opacity: 0; transform: translateX(110px) rotate(42deg) scale(0); }
+}
+
+@keyframes whatsapp-sent-pop {
+  0% { opacity: 0; filter: blur(4px); transform: scale(3) rotate(-35deg); }
+  55% { opacity: 1; filter: blur(0); transform: scale(0.78); }
+  100% { opacity: 1; transform: scale(1); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .whatsapp-send-button,
+  .whatsapp-send-button *,
+  .whatsapp-send-button *::before {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}

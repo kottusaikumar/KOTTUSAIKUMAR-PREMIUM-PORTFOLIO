@@ -1,0 +1,100 @@
+/* 21-contact-final-placement.css
+   Final desktop-only Contact placement pass.
+   Extracted verbatim from the original src/styles/portfolio.css
+   (lines 5596-5687) — content unchanged, only the file location
+   moved. Import order in index.css matches the original source
+   order exactly; do not reorder these imports, later files rely
+   on cascade order to override earlier ones. */
+
+/* FINAL CONTACT-ONLY DESKTOP PLACEMENT */
+@media (min-width: 981px) {
+  #contact.contact {
+    width: 100%;
+    height: 100vh;
+    min-height: 100vh;
+    padding: 0;
+  }
+
+  #contact.contact .contact-grid {
+    grid-template-columns: minmax(0, 360px);
+    grid-template-rows: auto auto;
+    align-content: start;
+    align-items: stretch;
+    justify-content: end;
+    gap: 10px;
+    width: 360px;
+    max-width: calc(100vw - 72px);
+    min-height: calc(100vh - 76px);
+    margin: 0 clamp(34px, 3.8vw, 68px) 0 auto;
+    padding: 88px 0 16px;
+  }
+
+  #contact.contact .contact-grid > .contact-info {
+    grid-column: 1;
+    grid-row: 1;
+    justify-self: stretch;
+    width: 100%;
+    max-width: none;
+    padding: 17px 20px !important;
+  }
+
+  #contact.contact .contact-grid > .contact-form {
+    grid-column: 1;
+    grid-row: 2;
+    justify-self: stretch;
+    width: 100%;
+    max-width: none;
+    padding: 15px 17px 17px !important;
+    gap: 7px;
+  }
+
+  #contact.contact .section-eyebrow {
+    padding: 5px 13px;
+    font-size: 0.64rem;
+  }
+
+  #contact.contact .contact-title {
+    margin-bottom: 10px;
+    font-size: clamp(1.72rem, 1.4rem + 0.85vw, 2.25rem);
+  }
+
+  #contact.contact .contact-email {
+    font-size: 0.78rem;
+  }
+
+  #contact.contact .contact-links {
+    gap: 6px;
+    margin-top: 10px;
+  }
+
+  #contact.contact .contact-links a {
+    min-height: 32px;
+    padding: 6px 10px;
+    font-size: 0.64rem;
+  }
+
+  #contact.contact .contact-form input {
+    min-height: 40px;
+    padding: 9px 12px;
+  }
+
+  #contact.contact .contact-form textarea {
+    min-height: 72px;
+    padding: 9px 12px;
+  }
+
+  #contact.contact .contact-form button {
+    min-height: 41px;
+    margin-top: 1px;
+    font-size: 0.72rem;
+  }
+
+  #contact.contact .site-footer {
+    position: absolute;
+    right: clamp(34px, 3.8vw, 68px);
+    bottom: 14px;
+    left: clamp(34px, 3.8vw, 68px);
+    z-index: 3;
+  }
+}
+

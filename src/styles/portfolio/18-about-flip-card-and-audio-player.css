@@ -1,0 +1,417 @@
+/* 18-about-flip-card-and-audio-player.css
+   About section hover-flip portrait card, resume CTA treatment, flip-card centering fix, and the 'Listen to My Introduction' audio player.
+   Extracted verbatim from the original src/styles/portfolio.css
+   (lines 5038-5446) — content unchanged, only the file location
+   moved. Import order in index.css matches the original source
+   order exactly; do not reorder these imports, later files rely
+   on cascade order to override earlier ones. */
+
+/* ABOUT — image-backed hover flip card */
+.about-flip-card {
+  width: min(92%, 420px);
+  aspect-ratio: 3 / 4;
+  perspective: 1400px;
+  position: relative;
+  transform: translateY(12px);
+  z-index: 2;
+}
+
+.about-flip-content {
+  width: 100%;
+  height: 100%;
+  position: relative;
+  transform-style: preserve-3d;
+  transition: transform 700ms cubic-bezier(0.23, 1, 0.32, 1);
+  border-radius: 24px;
+  box-shadow: 0 24px 70px rgba(0, 0, 0, 0.34);
+}
+
+.about-flip-card:hover .about-flip-content,
+.about-flip-card:focus-within .about-flip-content {
+  transform: rotateY(180deg);
+}
+
+.about-flip-front,
+.about-flip-back {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  border-radius: 24px;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+  background: #151515;
+}
+
+.about-flip-front {
+  transform: rotateY(0deg);
+}
+
+.about-flip-back {
+  transform: rotateY(180deg);
+}
+
+.about-flip-front img,
+.about-flip-back img {
+  position: absolute !important;
+  inset: 0;
+  width: 100% !important;
+  height: 100% !important;
+  max-width: none !important;
+  object-fit: cover;
+  object-position: center;
+  transform: none !important;
+  border-radius: inherit;
+}
+
+.about-flip-label,
+.about-flip-back-content {
+  position: absolute;
+  left: 7%;
+  right: 7%;
+  bottom: 6%;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 14px 18px;
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  border-radius: 14px;
+  color: #fff;
+  background: rgba(8, 8, 8, 0.68);
+  backdrop-filter: blur(8px);
+}
+
+.about-flip-label strong,
+.about-flip-back-content strong {
+  font-size: clamp(1rem, 1.7vw, 1.3rem);
+}
+
+.about-flip-label span {
+  color: rgba(255, 255, 255, 0.78);
+  font-size: 0.82rem;
+}
+
+.about-flip-back-content {
+  align-items: center;
+  text-align: center;
+}
+
+.about-flip-back-content > span {
+  color: #ff8a00;
+  font-size: 2rem;
+  font-weight: 800;
+  line-height: 1;
+}
+
+/* Resume CTA — retain the original pill shape and About palette while
+   adding the supplied hover-only download treatment. */
+.about-cta {
+  font-size: 0;
+  isolation: isolate;
+}
+
+.about-cta::before {
+  content: "";
+  position: absolute;
+  inset: -100% 0 100%;
+  border-radius: inherit;
+  background: linear-gradient(
+    180deg,
+    rgba(255, 255, 255, 0.24),
+    rgba(255, 255, 255, 0.08)
+  );
+  transition: inset 0.5s ease-in-out;
+  z-index: -1;
+}
+
+.about-cta:hover::before,
+.about-cta:focus-visible::before {
+  inset: 0;
+}
+
+.about-cta-icon,
+.about-cta-label {
+  position: relative;
+  z-index: 2;
+  font-size: 0.88rem;
+}
+
+.about-cta-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.35s var(--ease-spring);
+}
+
+.about-cta:hover .about-cta-icon,
+.about-cta:focus-visible .about-cta-icon {
+  transform: translateY(3px);
+}
+
+.about-cta-loading {
+  position: absolute;
+  inset: -35%;
+  border-radius: 50%;
+  background: linear-gradient(
+    225deg,
+    rgba(243, 201, 105, 0.72),
+    rgba(63, 215, 154, 0.48),
+    transparent 68%
+  );
+  filter: blur(16px);
+  opacity: 0;
+  z-index: -1;
+  transition: opacity 0.3s ease;
+  animation: about-cta-rotate 0.8s linear infinite;
+}
+
+.about-cta:hover .about-cta-loading,
+.about-cta:focus-visible .about-cta-loading {
+  opacity: 1;
+}
+
+@keyframes about-cta-rotate {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@media (max-width: 760px) {
+  .about-flip-card {
+    width: min(92%, 300px);
+    transform: translateY(24px);
+  }
+}
+
+/* Keep the flip card centered in its column at every breakpoint —
+   it's narrower than .about-illustration (min(92%, 420px)) on
+   purpose for the drop-shadow to breathe, so without this it can
+   read as left-hugging/off-balance instead of a framed portrait. */
+.about-illustration {
+  display: flex;
+  justify-content: center;
+}
+.about-flip-front img,
+.about-flip-back img {
+  object-position: center 22%;
+}
+
+/* ABOUT — "Listen to My Introduction" player. Self-contained audio
+   control that reuses the section's Emerald & Gold custom properties
+   so it always matches whichever About palette is active. */
+.intro-audio-player {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  width: 100%;
+  max-width: 420px;
+  margin: 26px 0 4px;
+  padding: 14px 18px 14px 14px;
+  border-radius: 18px;
+  border: 1px solid rgba(243, 201, 105, 0.22);
+  background: linear-gradient(
+    160deg,
+    rgba(63, 215, 154, 0.1),
+    rgba(243, 201, 105, 0.06)
+  );
+  backdrop-filter: blur(10px);
+  box-shadow: 0 18px 46px rgba(0, 0, 0, 0.22);
+}
+
+.intro-audio-play-btn {
+  flex: 0 0 auto;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  border: none;
+  color: var(--w-abt-base, #0c2e22);
+  background: linear-gradient(135deg, var(--w-abt-gold, #f3c969), #c99a3f);
+  cursor: pointer;
+  box-shadow: 0 8px 20px rgba(243, 201, 105, 0.35);
+  transition:
+    transform 0.3s var(--ease-spring),
+    box-shadow 0.3s var(--ease-out);
+}
+.intro-audio-play-btn svg {
+  transform: translateX(1px);
+}
+.intro-audio-player.is-playing .intro-audio-play-btn svg {
+  transform: none;
+}
+.intro-audio-play-btn:hover,
+.intro-audio-play-btn:focus-visible {
+  transform: translateY(-2px) scale(1.04);
+  box-shadow: 0 12px 28px rgba(243, 201, 105, 0.48);
+}
+
+.intro-audio-body {
+  flex: 1 1 auto;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.intro-audio-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.intro-audio-labels {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+}
+.intro-audio-title {
+  font-family: var(--font-ui);
+  font-size: 0.86rem;
+  font-weight: 700;
+  color: var(--w-abt-ink, #ebfcf3);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.intro-audio-subtitle {
+  font-family: var(--font-ui);
+  font-size: 0.72rem;
+  color: rgba(235, 252, 243, 0.58);
+}
+
+/* Small equalizer bars — purely decorative, only "dance" while
+   audio is actually playing. Mirrors the now-playing indicator
+   pattern from the reference music-card component. */
+.intro-audio-eq {
+  flex: 0 0 auto;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  gap: 2px;
+  width: 18px;
+  height: 14px;
+}
+.intro-audio-eq-bar {
+  width: 3px;
+  height: 100%;
+  border-radius: 2px;
+  background: var(--w-abt-emerald, #3fd79a);
+  opacity: 0.35;
+  transform: scaleY(0.15);
+  transform-origin: bottom;
+  transition: opacity 0.3s ease;
+}
+.intro-audio-player.is-playing .intro-audio-eq-bar {
+  opacity: 1;
+  animation: intro-audio-eq-bounce 1s ease-in-out infinite;
+}
+.intro-audio-player.is-playing .intro-audio-eq-bar:nth-child(1) {
+  animation-delay: 0.1s;
+}
+.intro-audio-player.is-playing .intro-audio-eq-bar:nth-child(2) {
+  animation-delay: 0.4s;
+}
+.intro-audio-player.is-playing .intro-audio-eq-bar:nth-child(3) {
+  animation-delay: 0.2s;
+}
+.intro-audio-player.is-playing .intro-audio-eq-bar:nth-child(4) {
+  animation-delay: 0s;
+}
+@keyframes intro-audio-eq-bounce {
+  0% {
+    transform: scaleY(0.15);
+  }
+  33% {
+    transform: scaleY(0.65);
+  }
+  66% {
+    transform: scaleY(0.95);
+  }
+  100% {
+    transform: scaleY(0.15);
+  }
+}
+
+.intro-audio-scrubber {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.intro-audio-time {
+  flex: 0 0 auto;
+  min-width: 30px;
+  font-family: var(--font-ui);
+  font-size: 0.68rem;
+  font-variant-numeric: tabular-nums;
+  color: rgba(235, 252, 243, 0.58);
+}
+.intro-audio-time:last-child {
+  text-align: right;
+}
+
+.intro-audio-track {
+  position: relative;
+  flex: 1 1 auto;
+  height: 4px;
+  border-radius: 999px;
+  background: rgba(235, 252, 243, 0.16);
+}
+.intro-audio-track-fill {
+  position: absolute;
+  inset: 0 auto 0 0;
+  border-radius: inherit;
+  background: linear-gradient(
+    90deg,
+    var(--w-abt-emerald, #3fd79a),
+    var(--w-abt-gold, #f3c969)
+  );
+  pointer-events: none;
+}
+.intro-audio-range {
+  position: absolute;
+  inset: -8px 0;
+  width: 100%;
+  height: 20px;
+  margin: 0;
+  appearance: none;
+  -webkit-appearance: none;
+  background: transparent;
+  cursor: pointer;
+}
+.intro-audio-range::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: #fff;
+  box-shadow: 0 0 0 3px rgba(243, 201, 105, 0.32);
+  transition: transform 0.2s var(--ease-out);
+}
+.intro-audio-range:hover::-webkit-slider-thumb,
+.intro-audio-range:focus-visible::-webkit-slider-thumb {
+  transform: scale(1.2);
+}
+.intro-audio-range::-moz-range-thumb {
+  width: 12px;
+  height: 12px;
+  border: none;
+  border-radius: 50%;
+  background: #fff;
+  box-shadow: 0 0 0 3px rgba(243, 201, 105, 0.32);
+}
+
+@media (max-width: 480px) {
+  .intro-audio-player {
+    max-width: 100%;
+    gap: 12px;
+    padding: 12px 14px 12px 12px;
+  }
+  .intro-audio-eq {
+    display: none;
+  }
+}
+

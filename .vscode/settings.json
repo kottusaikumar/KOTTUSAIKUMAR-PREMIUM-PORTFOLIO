@@ -1,0 +1,18 @@
+{
+  // Tailwind CSS v4 introduces new CSS at-rules — @import "tailwindcss",
+  // @source, @custom-variant, @theme, @apply — that VS Code's built-in
+  // CSS/SCSS/LESS language server doesn't recognize. It's not a real
+  // error (the project builds and type-checks cleanly), just the
+  // editor flagging syntax it doesn't know yet. This turns that
+  // specific "unknown at rule" check off so styles.css stops showing
+  // a false problem count.
+  "css.lint.unknownAtRules": "ignore",
+  "less.lint.unknownAtRules": "ignore",
+  "scss.lint.unknownAtRules": "ignore",
+
+  // If the Tailwind CSS IntelliSense extension is installed, point it
+  // at this project's CSS entry so it understands @theme/@apply/etc.
+  // for real autocomplete + hover docs instead of just silencing the
+  // warning.
+  "tailwindCSS.experimental.configFile": "src/styles.css"
+}

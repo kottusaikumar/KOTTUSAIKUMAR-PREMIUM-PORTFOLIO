@@ -1,0 +1,475 @@
+/* 08-paper-cut-color-worlds-v3.css
+   Historical revision: 'Premium Paper-Cut Color Worlds' — supersedes the palette patch above for Experience/Process/About/Work/Proof/Contact.
+   Extracted verbatim from the original src/styles/portfolio.css
+   (lines 3831-4297) — content unchanged, only the file location
+   moved. Import order in index.css matches the original source
+   order exactly; do not reorder these imports, later files rely
+   on cascade order to override earlier ones. */
+
+/* =========================================================
+   PREMIUM PAPER-CUT COLOR WORLDS — Sections 02–07
+   Each section becomes a distinct, saturated "kirigami" world
+   (Hero + Skills untouched). This block is appended last so it
+   supersedes the earlier muted $50K palette patch.
+   ========================================================= */
+:root {
+  /* Experience — Oxblood & Brass */
+  --w-exp-base: #1a0b12;
+  --w-exp-accent: #6b1028;
+  --w-exp-glow: #c89b3c;
+  --w-exp-ink: #fff7f0;
+  /* Process — Rainbow Contour (luminous) */
+  --w-pro-ink: #241b12;
+  --w-pro-accent: #c8462e;
+  /* About — Emerald & Gold */
+  --w-abt-base: #0c2e22;
+  --w-abt-emerald: #3fd79a;
+  --w-abt-gold: #f3c969;
+  --w-abt-ink: #ebfcf3;
+  /* Work — Molten Crimson */
+  --w-wrk-base: #2a0c0a;
+  --w-wrk-crimson: #ff5a47;
+  --w-wrk-ember: #ffb07a;
+  --w-wrk-ink: #fcece7;
+  /* Proof — Golden City */
+  --w-prf-base: #120e22;
+  --w-prf-gold: #f0b94a;
+  --w-prf-warm: #ffe39a;
+  --w-prf-ink: #fbf4e4;
+  /* Contact — Midnight Indigo & Gold */
+  --w-con-base: #0c0f2e;
+  --w-con-indigo: #8a97ff;
+  --w-con-gold: #f3c969;
+  --w-con-ink: #eef0ff;
+  /* Chromatic portal (contact) */
+  --chrome-blue: #4285f4;
+  --chrome-red: #ea4335;
+  --chrome-yellow: #fbbc05;
+  --chrome-green: #34a853;
+}
+
+.premium-3d-scene {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  transform-style: preserve-3d;
+  perspective: 1200px;
+}
+
+/* ── EXPERIENCE · Oxblood & Brass ─────────────────────── */
+.experience {
+  color: var(--w-exp-ink);
+}
+.experience::before {
+  background:
+    radial-gradient(
+      circle at 80% 8%,
+      rgba(200, 155, 60, 0.22),
+      transparent 40%
+    ),
+    radial-gradient(circle at 12% 82%, rgba(107, 16, 40, 0.5), transparent 44%),
+    radial-gradient(circle at 52% 46%, rgba(150, 40, 60, 0.2), transparent 50%),
+    linear-gradient(160deg, rgba(26, 11, 18, 0.97), rgba(13, 5, 9, 0.94));
+  opacity: 1;
+}
+.experience-header .section-eyebrow {
+  background: rgba(200, 155, 60, 0.14);
+  color: var(--w-exp-glow);
+  border-color: rgba(200, 155, 60, 0.32);
+}
+.experience-title,
+.experience-company {
+  color: var(--w-exp-ink);
+}
+.experience-title strong,
+.experience-period {
+  color: var(--w-exp-glow);
+}
+.experience-desc {
+  color: rgba(255, 247, 240, 0.72);
+}
+.experience-card {
+  background:
+    linear-gradient(
+      160deg,
+      rgba(107, 16, 40, 0.2),
+      rgba(255, 255, 255, 0.03) 55%
+    ),
+    rgba(38, 14, 21, 0.55);
+  border-color: rgba(200, 155, 60, 0.22);
+  box-shadow:
+    0 26px 74px rgba(0, 0, 0, 0.4),
+    inset 0 1px 0 rgba(200, 155, 60, 0.16);
+}
+.experience-card:hover {
+  background:
+    linear-gradient(
+      160deg,
+      rgba(200, 155, 60, 0.2),
+      rgba(255, 255, 255, 0.05) 60%
+    ),
+    rgba(50, 17, 26, 0.68);
+  border-color: rgba(200, 155, 60, 0.44);
+  box-shadow:
+    0 34px 92px rgba(0, 0, 0, 0.48),
+    0 0 48px rgba(107, 16, 40, 0.32);
+}
+.experience-period {
+  background: rgba(200, 155, 60, 0.14);
+  border-color: rgba(200, 155, 60, 0.28);
+}
+.experience-card::before {
+  background: linear-gradient(180deg, var(--w-exp-glow), transparent);
+  opacity: 0.85;
+}
+.experience .section-gateway.gateway-experience {
+  color: rgba(200, 155, 60, 0.55);
+}
+body[data-tone="experience"] .site-header {
+  background: transparent;
+  border-bottom-color: transparent;
+}
+body[data-tone="experience"] .brand,
+body[data-tone="experience"] .header-nav a,
+body[data-tone="experience"] .pill-btn {
+  color: var(--w-exp-ink);
+}
+body[data-tone="experience"] .header-nav a {
+  color: rgba(245, 239, 255, 0.68);
+}
+
+/* ── PROCESS · Champagne circuit machine ──────────────── */
+.process {
+  background: #fff3dc !important;
+}
+.process::before {
+  background:
+    radial-gradient(
+      circle at 76% 18%,
+      rgba(255, 198, 112, 0.34),
+      transparent 34%
+    ),
+    radial-gradient(
+      circle at 10% 80%,
+      rgba(180, 98, 34, 0.18),
+      transparent 36%
+    ),
+    linear-gradient(145deg, #fff9ea 0%, #f4d9ae 100%) !important;
+}
+.process-circuit-world {
+  /* Keep the circuit animation readable over the decorative lattice. */
+  z-index: 2;
+  opacity: 0.9;
+}
+.circuit-node {
+  position: absolute;
+  width: 18px;
+  height: 18px;
+  border-radius: 999px;
+  background: #b86b2d;
+  box-shadow:
+    0 0 0 12px rgba(184, 107, 45, 0.09),
+    0 0 50px rgba(184, 107, 45, 0.35);
+}
+.node-a {
+  left: 13%;
+  top: 22%;
+}
+.node-b {
+  right: 18%;
+  top: 28%;
+}
+.node-c {
+  left: 28%;
+  bottom: 18%;
+}
+.node-d {
+  right: 26%;
+  bottom: 24%;
+}
+.circuit-path {
+  position: absolute;
+  height: 2px;
+  width: 58%;
+  left: 20%;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(184, 107, 45, 0.58),
+    transparent
+  );
+  box-shadow: 0 0 26px rgba(184, 107, 45, 0.22);
+}
+.path-a {
+  top: 35%;
+  transform: rotate(7deg);
+}
+.path-b {
+  bottom: 34%;
+  transform: rotate(-8deg);
+}
+.process-header .section-eyebrow {
+  background: rgba(200, 70, 46, 0.1);
+  color: #b23a22;
+  border-color: rgba(200, 70, 46, 0.26);
+}
+.process-title strong,
+.process-step {
+  background: linear-gradient(
+    90deg,
+    #e1352e,
+    #f5a623 40%,
+    #3fd79a 70%,
+    #5b6be0
+  );
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  color: #b23a22;
+}
+.process-rail-line {
+  background: linear-gradient(
+    90deg,
+    transparent,
+    #e1352e,
+    #f5a623,
+    #3fd79a,
+    #5b6be0,
+    transparent
+  );
+}
+.process .section-gateway.gateway-process {
+  color: rgba(226, 53, 46, 0.6);
+}
+
+/* ── ABOUT · Emerald & Gold ───────────────────────────── */
+.about {
+  color: var(--w-abt-ink);
+  background: #003D10 !important;
+}
+.about::before {
+  background: #003D10 !important;
+  opacity: 1;
+}
+.about-copy .section-eyebrow {
+  background: rgba(63, 215, 154, 0.12);
+  color: var(--w-abt-gold);
+  border-color: rgba(63, 215, 154, 0.28);
+}
+.about-title,
+.about-title strong {
+  color: var(--w-abt-ink);
+}
+.about-title strong {
+  color: var(--w-abt-gold);
+}
+.about-lede {
+  color: rgba(235, 252, 243, 0.74);
+}
+.about-illustration::before {
+  background: linear-gradient(
+    135deg,
+    rgba(63, 215, 154, 0.3),
+    rgba(243, 201, 105, 0.24)
+  );
+}
+.about-cta {
+  background: linear-gradient(135deg, var(--w-abt-gold), #c99a3f);
+  color: #0c2e22;
+}
+.about-cta:hover {
+  box-shadow: 0 14px 40px rgba(243, 201, 105, 0.42);
+}
+.about .section-gateway.gateway-about {
+  color: rgba(63, 215, 154, 0.48);
+}
+body[data-tone="about"] .site-header {
+  background: rgba(8, 30, 22, 0.5);
+  border-bottom-color: rgba(63, 215, 154, 0.14);
+}
+body[data-tone="about"] .brand,
+body[data-tone="about"] .header-nav a,
+body[data-tone="about"] .pill-btn {
+  color: var(--w-abt-ink);
+}
+body[data-tone="about"] .header-nav a {
+  color: rgba(235, 252, 243, 0.68);
+}
+
+/* ── WORK · Clean white video-card gallery ────────────── */
+body[data-tone="work"] .site-header {
+  background: transparent;
+  border-bottom-color: transparent;
+}
+
+/* ── PROOF · Golden City ──────────────────────────────── */
+.proof {
+  color: var(--w-prf-ink);
+}
+.proof::before {
+  background:
+    radial-gradient(
+      circle at 72% 14%,
+      rgba(240, 185, 74, 0.22),
+      transparent 38%
+    ),
+    radial-gradient(
+      circle at 18% 78%,
+      rgba(120, 90, 180, 0.2),
+      transparent 40%
+    ),
+    linear-gradient(160deg, rgba(18, 14, 34, 0.94), rgba(8, 6, 18, 0.9));
+  opacity: 1;
+}
+.proof-header .section-eyebrow {
+  background: rgba(240, 185, 74, 0.12);
+  color: var(--w-prf-warm);
+  border-color: rgba(240, 185, 74, 0.28);
+}
+.proof-title strong {
+  color: var(--w-prf-gold);
+}
+.proof-card {
+  background: linear-gradient(
+    180deg,
+    rgba(240, 185, 74, 0.12),
+    rgba(255, 255, 255, 0.04)
+  );
+  border-color: rgba(240, 185, 74, 0.24);
+  box-shadow:
+    0 32px 86px rgba(0, 0, 0, 0.4),
+    inset 0 1px 0 rgba(255, 227, 154, 0.14);
+}
+.proof-card:hover {
+  border-color: rgba(240, 185, 74, 0.5);
+  box-shadow:
+    0 44px 114px rgba(0, 0, 0, 0.48),
+    0 0 52px rgba(240, 185, 74, 0.18);
+}
+.proof-card strong {
+  color: var(--w-prf-gold);
+}
+.proof-card p {
+  color: rgba(251, 244, 228, 0.66);
+}
+.proof-orbit,
+.proof-orbit::before,
+.proof-orbit::after {
+  border-color: rgba(240, 185, 74, 0.16);
+}
+.proof .section-gateway.gateway-proof {
+  color: rgba(240, 185, 74, 0.55);
+}
+body[data-tone="proof"] .site-header {
+  background: rgba(8, 6, 18, 0.55);
+  border-bottom-color: rgba(240, 185, 74, 0.16);
+}
+body[data-tone="proof"] .brand,
+body[data-tone="proof"] .header-nav a,
+body[data-tone="proof"] .pill-btn {
+  color: var(--w-prf-ink);
+}
+body[data-tone="proof"] .header-nav a {
+  color: rgba(251, 244, 228, 0.68);
+}
+
+/* ── CONTACT · Vintage rotary telephone close ─────────── */
+.contact {
+  background: #050505 !important;
+  color: #ffffff !important;
+}
+.contact::before {
+  background: radial-gradient(
+    circle at 50% 48%,
+    rgba(244, 132, 95, 0.12),
+    rgba(244, 132, 95, 0.05) 30%,
+    transparent 68%
+  ) !important;
+}
+.contact-grid > div .section-eyebrow,
+.contact .section-eyebrow {
+  background: rgba(255, 255, 255, 0.05) !important;
+  color: #ffffff !important;
+  border-color: rgba(255, 255, 255, 0.15) !important;
+}
+.contact-title strong {
+  color: #f4845f !important;
+}
+.contact-email {
+  color: rgba(255, 255, 255, 0.88) !important;
+}
+.contact-email::after {
+  background: linear-gradient(
+    90deg,
+    #f4845f,
+    #d9633e,
+    #6eb5ff,
+    #6bbf7a
+  ) !important;
+}
+.contact-email:hover {
+  color: #f4845f !important;
+}
+.contact-links a {
+  color: rgba(255, 255, 255, 0.76) !important;
+  background: rgba(255, 255, 255, 0.04) !important;
+  border-color: rgba(255, 255, 255, 0.15) !important;
+}
+.contact-links a:hover {
+  color: #f4845f !important;
+  background: rgba(255, 255, 255, 0.09) !important;
+  border-color: rgba(244, 132, 95, 0.28) !important;
+}
+.contact-form {
+  background: rgba(10, 10, 10, 0.88) !important;
+  border-color: rgba(255, 255, 255, 0.1) !important;
+  backdrop-filter: blur(24px) saturate(1.1);
+  box-shadow:
+    0 34px 95px rgba(0, 0, 0, 0.6),
+    inset 0 1px 0 rgba(255, 255, 255, 0.05) !important;
+}
+.contact-info {
+  background: rgba(5, 5, 5, 0.55) !important;
+  border-color: rgba(255, 255, 255, 0.1) !important;
+}
+.contact-form input,
+.contact-form textarea {
+  background: rgba(255, 255, 255, 0.02) !important;
+  border-color: rgba(255, 255, 255, 0.1) !important;
+  color: #ffffff !important;
+}
+.contact-form input::placeholder,
+.contact-form textarea::placeholder {
+  color: rgba(255, 255, 255, 0.42) !important;
+}
+.contact-form input:focus,
+.contact-form textarea:focus {
+  border-color: rgba(244, 132, 95, 0.42) !important;
+  box-shadow: 0 0 0 3px rgba(244, 132, 95, 0.1) !important;
+}
+.contact-form button {
+  background: linear-gradient(
+    135deg,
+    #f4845f,
+    #d9633e
+  ) !important;
+  color: #fff !important;
+}
+.contact-form button:hover {
+  box-shadow: 0 16px 44px rgba(244, 132, 95, 0.34) !important;
+}
+.contact .section-gateway.gateway-contact {
+  color: rgba(244, 132, 95, 0.4) !important;
+}
+body[data-tone="contact"] .site-header {
+  background: rgba(5, 5, 5, 0.5) !important;
+  border-bottom-color: rgba(255, 255, 255, 0.08) !important;
+  backdrop-filter: blur(8px);
+}
+body[data-tone="contact"] .brand,
+body[data-tone="contact"] .header-nav a,
+body[data-tone="contact"] .pill-btn {
+  color: #ffffff !important;
+}
+

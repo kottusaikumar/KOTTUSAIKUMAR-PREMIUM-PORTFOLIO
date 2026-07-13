@@ -1,0 +1,99 @@
+/* 12-process-background-checker.css
+   Process section background — checkerboard pattern in the Process palette.
+   Extracted verbatim from the original src/styles/portfolio.css
+   (lines 4646-4736) — content unchanged, only the file location
+   moved. Import order in index.css matches the original source
+   order exactly; do not reorder these imports, later files rely
+   on cascade order to override earlier ones. */
+
+/* PROCESS BACKGROUND — Experience-style checkerboard in the Process palette */
+.process {
+  background: #fff3dc !important;
+}
+
+.process::before {
+  background: none !important;
+  opacity: 0 !important;
+}
+
+.process-pattern-bg {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  /* The pattern is atmosphere; the animated circuit should remain the
+     primary visual layer. */
+  opacity: 0.3;
+  mix-blend-mode: normal;
+}
+
+.process-pattern-bg .process-pattern-fill {
+  width: 100%;
+  height: 100%;
+  max-width: none;
+  /* Geometric lattice pattern, recolored with the Process palette. */
+  --process-base: #fff3dc;
+  --process-copper: #b86b2d;
+  --process-glow: rgba(184, 107, 45, 0.2);
+  background:
+    linear-gradient(
+        30deg,
+        var(--process-copper) 12%,
+        transparent 12.5%,
+        transparent 87%,
+        var(--process-copper) 87.5%,
+        var(--process-copper)
+      ),
+    linear-gradient(
+        150deg,
+        var(--process-copper) 12%,
+        transparent 12.5%,
+        transparent 87%,
+        var(--process-copper) 87.5%,
+        var(--process-copper)
+      ),
+    linear-gradient(
+        30deg,
+        var(--process-copper) 12%,
+        transparent 12.5%,
+        transparent 87%,
+        var(--process-copper) 87.5%,
+        var(--process-copper)
+      ),
+    linear-gradient(
+        150deg,
+        var(--process-copper) 12%,
+        transparent 12.5%,
+        transparent 87%,
+        var(--process-copper) 87.5%,
+        var(--process-copper)
+      ),
+    linear-gradient(
+        60deg,
+        var(--process-glow) 25%,
+        transparent 25.5%,
+        transparent 75%,
+        var(--process-glow) 75%,
+        var(--process-glow)
+      ),
+    linear-gradient(
+        60deg,
+        var(--process-glow) 25%,
+        transparent 25.5%,
+        transparent 75%,
+        var(--process-glow) 75%,
+        var(--process-glow)
+      );
+  background-position: 0 0, 0 0, 40px 70px, 40px 70px, 0 0, 40px 70px;
+  background-color: var(--process-base);
+  background-size: 80px 140px;
+  box-shadow: inset 0 0 100px rgba(184, 107, 45, 0.16);
+}
+
+.process-header,
+.process-rail,
+.process-grid {
+  position: relative;
+  z-index: 3;
+}
+

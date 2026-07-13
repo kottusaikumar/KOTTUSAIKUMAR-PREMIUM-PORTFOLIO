@@ -1,0 +1,180 @@
+/* 09-scroll-motion-features.css
+   Marquee ticker, pinned hero curtain rise, and other scroll/motion features ported in as a colour-neutral pass.
+   Extracted verbatim from the original src/styles/portfolio.css
+   (lines 4298-4469) — content unchanged, only the file location
+   moved. Import order in index.css matches the original source
+   order exactly; do not reorder these imports, later files rely
+   on cascade order to override earlier ones. */
+
+/* =========================================================
+   SCROLL + MOTION FEATURES — ported from the "dark luxury"
+   build, colour-neutral: every value below reuses this file's
+   EXISTING tokens/hex values only. No new hues introduced.
+   ========================================================= */
+
+/* ─── MARQUEE — infinite drifting tool/stack ticker ───────────────
+   Same "trusted-by" strip motif as the reference site's logo band
+   directly under its hero: a thin, continuously-scrolling row that
+   never stops, pauses gently on hover. Pure-CSS keyframe loop with
+   a duplicated list for a seamless wrap. */
+.lux-marquee {
+  position: relative;
+  z-index: 6;
+  overflow: hidden;
+  background: #1d1d1d;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  padding: 16px 0;
+  border-radius: 26px 26px 0 0;
+  margin-top: -26px;
+  box-shadow: 0 -30px 70px rgba(0, 0, 0, 0.28);
+  mask-image: linear-gradient(
+    90deg,
+    transparent 0%,
+    #000 6%,
+    #000 94%,
+    transparent 100%
+  );
+  -webkit-mask-image: linear-gradient(
+    90deg,
+    transparent 0%,
+    #000 6%,
+    #000 94%,
+    transparent 100%
+  );
+}
+.lux-marquee-track {
+  display: flex;
+  width: max-content;
+  animation: luxMarqueeScroll 32s linear infinite;
+}
+.lux-marquee:hover .lux-marquee-track {
+  animation-play-state: paused;
+}
+.lux-marquee-list {
+  display: flex;
+  align-items: center;
+  gap: 40px;
+  padding-right: 40px;
+  flex: 0 0 auto;
+}
+.lux-marquee-list li {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 0.78rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #ffffff;
+  white-space: nowrap;
+}
+.lux-marquee-dot {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: #ffffff;
+  opacity: 0.72;
+  flex: 0 0 auto;
+}
+@keyframes luxMarqueeScroll {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+/* ─── PINNED HERO → CURTAIN RISE ──────────────────────────────────
+   The hero pins in place and the marquee (the element that now
+   directly follows it) rises up over it with a soft rounded edge —
+   the same sticky-backdrop-then-panel-slides-over motion used on
+   the reference site's opening scroll. */
+#hero {
+  position: sticky !important;
+  top: 0;
+  height: 100vh;
+  z-index: 0;
+}
+
+@media (max-width: 760px) {
+  #hero {
+    position: relative !important;
+  }
+  .lux-marquee {
+    border-radius: 16px 16px 0 0;
+    margin-top: -16px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  #hero {
+    position: relative !important;
+  }
+  .lux-marquee-track {
+    animation: none;
+  }
+}
+
+/* ─── PROCESS — scalloped "ticket" edge ───────────────────────────
+   A perforated top border on each step card, echoing the reference
+   site's die-cut "Stap 1-4" ticket cards. Colour matches this card's
+   own section background (#fff3dc) exactly, so it reads as a true
+   cut-out rather than a new colour block. */
+.process-card::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 12px;
+  background: #fff3dc;
+  -webkit-mask-image: radial-gradient(
+    circle at 10px 0,
+    transparent 8px,
+    #000 9px
+  );
+  mask-image: radial-gradient(circle at 10px 0, transparent 8px, #000 9px);
+  -webkit-mask-size: 20px 12px;
+  mask-size: 20px 12px;
+  -webkit-mask-repeat: repeat-x;
+  mask-repeat: repeat-x;
+  z-index: 2;
+  pointer-events: none;
+}
+
+/* ─── PROJECTS — die-cut media corner ─────
+   A small angled cut on each card's media corner echoing the
+   die-cut card-shape overlay used elsewhere on the site. */
+.work-card-media::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 0;
+  height: 0;
+  border-style: solid;
+  border-width: 0 46px 46px 0;
+  border-color: transparent rgba(var(--color-card), 0.34) transparent transparent;
+  opacity: 0.35;
+  pointer-events: none;
+}
+
+.work-card {
+  transition:
+    box-shadow 0.35s var(--ease-out),
+    border-color 0.35s var(--ease-out);
+}
+.work-card:hover {
+  transform: translate(-50%, -50%) translate3d(var(--orbit-x, 0), var(--orbit-y, 0), 0)
+    scale(calc(var(--orbit-scale, 1) * 1.04));
+}
+
+@media (max-width: 860px) {
+  .work-card:hover {
+    transform: translate(-50%, -50%) translate3d(var(--orbit-x, 0), var(--orbit-y, 0), 0)
+      scale(calc(var(--orbit-scale, 1) * 1.04));
+  }
+}
+

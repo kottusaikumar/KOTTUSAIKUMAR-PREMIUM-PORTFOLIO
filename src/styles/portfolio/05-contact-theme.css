@@ -1,0 +1,276 @@
+/* 05-contact-theme.css
+   Contact section — base layout + muted rose/soft-orb theme.
+   Extracted verbatim from the original src/styles/portfolio.css
+   (lines 2447-2714) — content unchanged, only the file location
+   moved. Import order in index.css matches the original source
+   order exactly; do not reorder these imports, later files rely
+   on cascade order to override earlier ones. */
+
+/* =========================================================
+   CONTACT — muted rose, soft-orb motif
+   ========================================================= */
+.contact {
+  position: relative;
+  z-index: 10;
+  background: transparent;
+  color: #ffffff;
+  padding: clamp(80px, 12vh, 140px) clamp(24px, 4vw, 72px)
+    clamp(48px, 6vh, 64px);
+  overflow: hidden;
+}
+
+.contact-grid {
+  display: grid;
+  grid-template-columns: minmax(260px, 320px) minmax(260px, 340px);
+  align-items: start;
+  justify-content: space-between;
+  gap: clamp(300px, 30vw, 620px);
+  max-width: min(1740px, calc(100vw - 48px));
+  margin: 0 auto;
+  position: relative;
+  z-index: 1;
+}
+.contact-grid > div:first-child {
+  justify-self: end;
+  grid-column: 2;
+  max-width: 340px;
+}
+.contact-grid > .contact-form {
+  justify-self: start;
+  grid-column: 1;
+  grid-row: 1;
+  width: 100%;
+  max-width: 320px;
+  transform: none;
+}
+.contact-grid > div .section-eyebrow {
+  background: rgba(6, 148, 148, 0.1);
+  color: var(--c-contact-accent);
+  border: 0.5px solid rgba(6, 148, 148, 0.25);
+}
+
+.contact-title {
+  font-family: var(--font-display);
+  font-weight: 500;
+  font-size: clamp(1.75rem, 1.25rem + 1.65vw, 2.55rem);
+  letter-spacing: -0.015em;
+  margin-bottom: 14px;
+  color: #ffffff;
+}
+.contact-title strong {
+  font-weight: 700;
+  font-style: italic;
+  color: #a0ffff;
+}
+
+.contact-email {
+  font-weight: 600;
+  font-size: clamp(0.82rem, 0.68rem + 0.46vw, 0.96rem);
+  color: rgba(255, 255, 255, 0.9);
+  display: inline-block;
+  word-break: break-word;
+  padding-bottom: 4px;
+  position: relative;
+  transition: color 0.3s var(--ease-out);
+}
+.contact-email::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  width: 100%;
+  height: 1.5px;
+  background: linear-gradient(90deg, #a0ffff, #ffffff);
+  border-radius: 2px;
+}
+.contact-email:hover {
+  color: #a0ffff;
+}
+
+.contact-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 7px;
+  margin-top: 16px;
+}
+.contact-links a {
+  font-size: 0.68rem;
+  font-weight: 600;
+  padding: 6px 12px;
+  border: 0.5px solid rgba(255, 255, 255, 0.35);
+  border-radius: 100px;
+  color: rgba(255, 255, 255, 0.85);
+  background: rgba(255, 255, 255, 0.12);
+  backdrop-filter: blur(4px);
+  transition:
+    background 0.3s var(--ease-out),
+    border-color 0.3s var(--ease-out),
+    color 0.3s var(--ease-out),
+    transform 0.3s var(--ease-spring);
+}
+.contact-links a:hover {
+  background: rgba(6, 148, 148, 0.12);
+  border-color: rgba(6, 148, 148, 0.4);
+  color: var(--c-contact-accent);
+  transform: translateY(-2px);
+}
+
+.contact-info {
+  padding: clamp(18px, 2vw, 24px);
+  border-radius: 16px;
+  background: rgba(5, 5, 5, 0.42);
+  border: 0.5px solid rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(16px) saturate(1.1);
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.28);
+}
+
+/* Contact form */
+.contact-form {
+  display: flex;
+  flex-direction: column;
+  gap: 9px;
+  width: 100%;
+  position: relative;
+  padding: 16px;
+  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.9);
+  border: 0.5px solid rgba(43, 37, 32, 0.08);
+  backdrop-filter: blur(20px) saturate(1.2);
+  box-shadow: 0 30px 70px rgba(43, 37, 32, 0.1);
+}
+.contact-form input,
+.contact-form textarea {
+  background: rgba(255, 255, 255, 0.7);
+  border: 0.5px solid rgba(43, 37, 32, 0.12);
+  border-radius: 12px;
+  padding: 9px 13px;
+  color: var(--c-charcoal);
+  font-family: var(--font-ui);
+  font-size: 0.9rem;
+  transition:
+    background 0.3s var(--ease-out),
+    border-color 0.3s var(--ease-out),
+    box-shadow 0.3s var(--ease-out);
+}
+.contact-form input::placeholder,
+.contact-form textarea::placeholder {
+  color: rgba(43, 37, 32, 0.32);
+}
+.contact-form input:focus,
+.contact-form textarea:focus {
+  outline: none;
+  background: rgba(255, 255, 255, 0.95);
+  border-color: rgba(6, 148, 148, 0.5);
+  box-shadow: 0 0 0 3px rgba(6, 148, 148, 0.12);
+}
+.contact-form textarea {
+  resize: vertical;
+  min-height: 84px;
+}
+.contact-form button {
+  align-self: flex-start;
+  background: linear-gradient(135deg, #069494, #047a7a);
+  color: #faf6f0;
+  border: none;
+  padding: 10px 22px;
+  border-radius: 100px;
+  font-family: var(--font-ui);
+  font-size: 0.75rem;
+  font-weight: 600;
+  cursor: pointer;
+  box-shadow: 0 6px 24px rgba(6, 148, 148, 0.35);
+  transition:
+    transform 0.3s var(--ease-spring),
+    box-shadow 0.3s var(--ease-out);
+  letter-spacing: 0.01em;
+  position: relative;
+  overflow: hidden;
+}
+.contact-form button:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 14px 40px rgba(6, 148, 148, 0.48);
+}
+
+@media (max-width: 980px) {
+  .contact-grid {
+    grid-template-columns: 1fr;
+    gap: 28px;
+    max-width: min(420px, calc(100vw - 32px));
+    margin-left: clamp(16px, 6vw, 56px);
+    margin-right: auto;
+  }
+  .contact-grid > div:first-child {
+    grid-column: 1;
+    justify-self: stretch;
+    max-width: none;
+  }
+  .contact-grid > .contact-form {
+    grid-column: 1;
+    justify-self: stretch;
+    max-width: none;
+    transform: none;
+  }
+}
+
+@media (max-width: 760px) {
+  .premium-3d-scene {
+    opacity: 0.36 !important;
+  }
+  .portal-ring {
+    border-width: 9px;
+  }
+}
+
+/* ─── FOOTER ─────────────────────────────────────── */
+.contact .section-eyebrow {
+  color: #a0ffff !important;
+  background: rgba(255, 255, 255, 0.1) !important;
+  border-color: rgba(255, 255, 255, 0.2) !important;
+}
+
+.site-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 28px var(--gutter) 36px;
+  border-top: 0.5px solid rgba(43, 37, 32, 0.1);
+  font-size: 0.75rem;
+  color: rgba(43, 37, 32, 0.4);
+  background: transparent;
+  position: relative;
+  z-index: 1;
+}
+@media (max-width: 760px) {
+  .site-footer {
+    flex-direction: column;
+    gap: 8px;
+  }
+}
+
+/* Custom cursor removed — the native mouse arrow is used everywhere now. */
+
+/* ─── REDUCED MOTION ─────────────────────────────── */
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  .scroll-cue-line,
+  #scroll-bar {
+    animation: none;
+  }
+  .reveal {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
+  .skill-cell,
+  .experience-card,
+  .work-item-media img,
+  .about-illustration img,
+  .pill-btn,
+  .about-cta,
+  .contact-form button {
+    transition: none !important;
+  }
+}
+

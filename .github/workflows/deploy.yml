@@ -1,0 +1,66 @@
+name: Deploy to GitHub Pages
+
+on:
+  push:
+    branches: [main]
+  # Allows triggering this workflow manually from the Actions tab.
+  workflow_dispatch:
+
+# Allow only one concurrent deployment, skipping runs queued between the
+# run in-progress and latest queued. Cancelling in-progress runs is not
+# desired for a deploy job (an interrupted deploy can leave Pages half
+# updated), so in-progress runs are allowed to finish.
+concurrency:
+  group: "pages"
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Lint
+        run: npm run lint
+
+      - name: Type check
+        run: npx tsc --noEmit
+
+      - name: Build
+        # This repo is deployed as a GitHub Pages *project* page
+        # (username.github.io/repo-name/), so every built asset URL
+        # needs the repo name as its base path — see vite.config.ts.
+        run: npm run build
+        env:
+          VITE_BASE_PATH: /KOTTUSAIKUMAR-PREMIUM-PORTFOLIO/
+
+      - name: Upload build artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: ./dist
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4

@@ -1,0 +1,126 @@
+/* 20-contact-layout-balance.css
+   Contact section layout balance adjustments.
+   Extracted verbatim from the original src/styles/portfolio.css
+   (lines 5478-5595) — content unchanged, only the file location
+   moved. Import order in index.css matches the original source
+   order exactly; do not reorder these imports, later files rely
+   on cascade order to override earlier ones. */
+
+/* CONTACT LAYOUT BALANCE
+   Two related actions share one visual system and sit on a common axis around
+   the telephone focal point. */
+.contact .contact-grid {
+  grid-template-columns: minmax(340px, 390px) minmax(360px, 420px);
+  align-items: center;
+  justify-content: space-between;
+  gap: clamp(72px, 13vw, 260px);
+  width: 100%;
+  max-width: min(1540px, calc(100vw - 96px));
+  min-height: clamp(500px, 66vh, 660px);
+}
+
+.contact .contact-grid > .contact-form {
+  grid-column: 1;
+  grid-row: 1;
+  justify-self: start;
+  width: 100%;
+  max-width: 390px;
+}
+
+.contact .contact-grid > .contact-info {
+  grid-column: 2;
+  grid-row: 1;
+  justify-self: end;
+  width: 100%;
+  max-width: 420px;
+}
+
+.contact .contact-form,
+.contact .contact-info {
+  padding: clamp(22px, 2vw, 30px) !important;
+  border: 1px solid rgba(255, 255, 255, 0.13) !important;
+  border-radius: 22px !important;
+  background: rgba(8, 8, 9, 0.82) !important;
+  backdrop-filter: blur(20px) saturate(1.08) !important;
+  -webkit-backdrop-filter: blur(20px) saturate(1.08) !important;
+  box-shadow:
+    0 28px 80px rgba(0, 0, 0, 0.48),
+    inset 0 1px 0 rgba(255, 255, 255, 0.07) !important;
+}
+
+.contact .contact-form {
+  gap: 11px;
+}
+
+.contact .contact-title {
+  color: #fff !important;
+  font-size: clamp(2rem, 1.55rem + 1.4vw, 2.85rem);
+  line-height: 1.04;
+  margin-bottom: 20px;
+  text-shadow: 0 3px 24px rgba(0, 0, 0, 0.55);
+}
+
+.contact .contact-form input,
+.contact .contact-form textarea {
+  min-height: 50px;
+  padding: 12px 15px;
+  border-radius: 13px;
+}
+
+.contact .contact-form textarea {
+  min-height: 110px;
+}
+
+.contact .contact-form button {
+  align-self: stretch;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 50px;
+  margin-top: 3px;
+  border-radius: 13px;
+  font-size: 0.8rem;
+  letter-spacing: 0.01em;
+}
+
+.contact .contact-email {
+  max-width: 100%;
+  font-size: clamp(0.82rem, 0.7rem + 0.35vw, 1rem);
+}
+
+.contact .contact-links {
+  gap: 9px;
+  margin-top: 20px;
+}
+
+.contact .contact-links a {
+  min-height: 38px;
+  display: inline-flex;
+  align-items: center;
+  padding: 8px 14px;
+}
+
+@media (max-width: 980px) {
+  .contact .contact-grid {
+    grid-template-columns: minmax(0, 1fr);
+    max-width: min(600px, calc(100vw - 40px));
+    min-height: auto;
+    gap: 22px;
+    padding: 46px 0 24px;
+  }
+
+  .contact .contact-grid > .contact-info {
+    grid-column: 1;
+    grid-row: 1;
+    justify-self: stretch;
+    max-width: none;
+  }
+
+  .contact .contact-grid > .contact-form {
+    grid-column: 1;
+    grid-row: 2;
+    justify-self: stretch;
+    max-width: none;
+  }
+}
+

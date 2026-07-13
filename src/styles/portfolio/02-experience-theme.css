@@ -1,0 +1,157 @@
+/* 02-experience-theme.css
+   Experience section — base layout + moss green/paper theme.
+   Extracted verbatim from the original src/styles/portfolio.css
+   (lines 1109-1257) — content unchanged, only the file location
+   moved. Import order in index.css matches the original source
+   order exactly; do not reorder these imports, later files rely
+   on cascade order to override earlier ones. */
+
+/* =========================================================
+   EXPERIENCE — moss green, paper motif
+   ========================================================= */
+.experience {
+  position: relative;
+  z-index: 10;
+  background: transparent;
+  color: var(--c-cream);
+  padding: clamp(80px, 12vh, 140px) var(--gutter);
+  overflow: hidden;
+}
+
+.experience-pattern-bg {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  opacity: 0.22;
+  mix-blend-mode: screen;
+}
+
+.experience-pattern-bg .experience-pattern-fill {
+  width: 100%;
+  height: 100%;
+  max-width: none;
+  --color1: rgb(108, 231, 221);
+  --color2: rgb(250, 255, 178);
+  background-color: var(--color1);
+  background-image:
+    linear-gradient(
+      45deg,
+      var(--color2) 25%,
+      transparent 25%,
+      transparent 75%,
+      var(--color2) 75%,
+      var(--color2)
+    ),
+    linear-gradient(
+      45deg,
+      var(--color2) 25%,
+      var(--color1) 25%,
+      var(--color1) 75%,
+      var(--color2) 75%,
+      var(--color2)
+    );
+  background-size: 60px 60px;
+  background-position: 0 0, 30px 30px;
+}
+
+.experience-header {
+  text-align: center;
+  margin-bottom: clamp(48px, 7vh, 80px);
+  position: relative;
+  z-index: 1;
+}
+.experience-header .section-eyebrow {
+  background: rgba(244, 239, 230, 0.12);
+  color: var(--c-exp-accent);
+  border: 0.5px solid rgba(244, 239, 230, 0.25);
+}
+.experience-title {
+  font-family: var(--font-display);
+  font-weight: 500;
+  font-size: clamp(2.2rem, 1.5rem + 2.6vw, 3.6rem);
+  letter-spacing: -0.015em;
+  color: var(--c-cream);
+}
+.experience-title strong {
+  font-weight: 700;
+  font-style: italic;
+  color: var(--c-exp-accent);
+}
+
+.experience-list {
+  max-width: 1100px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: clamp(18px, 2.5vw, 26px);
+  position: relative;
+  z-index: 1;
+}
+
+.experience-card {
+  background: rgba(255, 255, 255, 0.06);
+  border: 0.5px solid rgba(244, 239, 230, 0.14);
+  border-radius: 18px;
+  padding: clamp(24px, 3vw, 36px);
+  transition:
+    background 0.3s var(--ease-out),
+    border-color 0.3s var(--ease-out),
+    transform 0.35s var(--ease-spring),
+    box-shadow 0.3s var(--ease-out);
+  backdrop-filter: blur(10px);
+  position: relative;
+  overflow: hidden;
+}
+.experience-card:hover {
+  background: rgba(255, 255, 255, 0.1);
+  border-color: rgba(244, 239, 230, 0.3);
+  transform: translateX(8px) translateY(-2px);
+  box-shadow: 0 14px 50px rgba(0, 0, 0, 0.2);
+}
+
+.experience-card-meta {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 16px;
+  flex-wrap: wrap;
+  margin-bottom: 16px;
+}
+.experience-card-left {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+.experience-logo {
+  width: 32px;
+  height: 32px;
+  object-fit: contain;
+  border-radius: 8px;
+  background: rgba(244, 239, 230, 0.9);
+  padding: 2px;
+  flex-shrink: 0;
+}
+.experience-period {
+  font-size: 0.7rem;
+  letter-spacing: 0.06em;
+  color: var(--c-exp-accent);
+  font-weight: 700;
+  background: rgba(244, 239, 230, 0.1);
+  padding: 5px 12px;
+  border-radius: 100px;
+  border: 0.5px solid rgba(244, 239, 230, 0.22);
+  white-space: nowrap;
+}
+.experience-company {
+  font-weight: 600;
+  font-size: 1.05rem;
+  letter-spacing: -0.005em;
+  color: var(--c-cream);
+}
+.experience-desc {
+  font-size: 0.9rem;
+  line-height: 1.75;
+  color: rgba(244, 239, 230, 0.66);
+}
+

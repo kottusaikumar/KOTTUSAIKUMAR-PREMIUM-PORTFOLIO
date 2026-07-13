@@ -1,0 +1,31 @@
+/* index.css — Portfolio section styles, split from the original
+   monolithic src/styles/portfolio.css into ordered partials for
+   readability. IMPORT ORDER IS LOAD-BEARING: this file iterated
+   through several full visual revisions over time (see each
+   partial's header), and later partials override earlier ones for
+   the same selectors. Reordering these imports will change the
+   rendered design. */
+
+@import "./00-tokens-reset-nav-hero.css";
+@import "./01-skills-theme.css";
+@import "./02-experience-theme.css";
+@import "./03-about-theme.css";
+@import "./04-projects-theme.css";
+@import "./05-contact-theme.css";
+@import "./06-motion-upgrade-section-identities.css";
+@import "./07-palette-patch-v2.css";
+@import "./08-paper-cut-color-worlds-v3.css";
+@import "./09-scroll-motion-features.css";
+@import "./10-proof-wall-gradient-override.css";
+@import "./11-experience-background-checker.css";
+@import "./12-process-background-checker.css";
+@import "./13-projects-restore.css";
+@import "./14-projects-slider-theme.css";
+@import "./15-intro-loader.css";
+@import "./16-projects-transition-curtain.css";
+@import "./17-header-glass-nav.css";
+@import "./18-about-flip-card-and-audio-player.css";
+@import "./19-proof-to-contact-pin.css";
+@import "./20-contact-layout-balance.css";
+@import "./21-contact-final-placement.css";
+@import "./22-whatsapp-submit-animation.css";

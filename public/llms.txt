@@ -1,0 +1,27 @@
+# Kottu Saikumar — Portfolio
+
+> Full-Stack AI Developer based in Hyderabad, India. Builds RAG systems,
+> ML pipelines, computer vision, and full-stack products.
+
+This is a single-page portfolio site. It is a client-rendered React app;
+an agent fetching the raw HTML without executing JavaScript will not see
+the page's content directly (see note below).
+
+## Sections
+- Skills — technical stack (AI/ML, full-stack, tools)
+- Experience — work history
+- Process — how projects are approached
+- Projects — selected work with live links and short descriptions
+- Proof — testimonials / social proof
+- Contact — GitHub, LinkedIn, X, and a WhatsApp-based contact form
+
+## Links
+- GitHub: https://github.com/kottusaikumar
+- LinkedIn: https://www.linkedin.com/in/sai-kumar-10541b269
+- X/Twitter: https://x.com/433Saikumar
+
+## Note for automated fetchers
+This site does not currently server-render or prerender its HTML — all
+content is mounted by React after JavaScript executes. Agents/crawlers
+that don't run JavaScript should not assume the raw HTML response
+reflects the page's actual content.
