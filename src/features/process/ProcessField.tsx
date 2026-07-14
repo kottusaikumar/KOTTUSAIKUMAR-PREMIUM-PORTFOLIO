@@ -1,5 +1,6 @@
 import { useEffect, useRef } from "react";
-import { ScrollTrigger } from "gsap/ScrollTrigger";
+import type { ScrollTrigger as ScrollTriggerType } from "gsap/ScrollTrigger";
+import { loadMotion } from "../../shared/motion";
 import {
   observeNearViewport,
   observeVisibilityToggle,
@@ -32,16 +33,18 @@ export function ProcessField({
 
     let disposed = false;
     let field: ProcessCircuitScene | undefined;
-    let st: ScrollTrigger | undefined;
+    let st: ScrollTriggerType | undefined;
     let stopToggle: (() => void) | undefined;
 
     const stopObserving = observeNearViewport(wrap, () => {
       if (disposed) return;
       (async () => {
-        const [THREE, { ProcessCircuit }] = await Promise.all([
-          import("three"),
-          import("./processCircuit.js"),
-        ]);
+        const [THREE, { ProcessCircuit }, { ScrollTrigger }] =
+          await Promise.all([
+            import("three"),
+            import("./processCircuit.js"),
+            loadMotion(),
+          ]);
         if (disposed) return;
         const scene = new ProcessCircuit({
           canvas,

@@ -89,7 +89,9 @@
       before React has even mounted. `imagesrcset`/`imagesizes` mirror
       the <picture>'s AVIF <source> in Hero.tsx so the browser
       preloads the same responsive candidate it will actually use
-      instead of guessing.
+      instead of guessing. `fetchpriority="high"` matches the actual
+      <img>'s fetchPriority="high" (see Hero.tsx) so the preload scan
+      doesn't leave this at the browser's default guessed priority.
     -->
     <link
       rel="preload"
@@ -97,6 +99,7 @@
       imagesrcset="%BASE_URL%images/hero/full-stack-ai-developer-480w.avif 480w, %BASE_URL%images/hero/full-stack-ai-developer-900w.avif 900w, %BASE_URL%images/hero/full-stack-ai-developer-1350w.avif 1350w, %BASE_URL%images/hero/full-stack-ai-developer-1800w.avif 1800w"
       imagesizes="(max-width: 640px) 60vw, 45vw"
       type="image/avif"
+      fetchpriority="high"
     />
   </head>
   <body>

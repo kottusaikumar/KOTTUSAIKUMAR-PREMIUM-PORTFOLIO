@@ -1,5 +1,6 @@
 import { useEffect, useRef } from "react";
-import { ScrollTrigger } from "gsap/ScrollTrigger";
+import type { ScrollTrigger as ScrollTriggerType } from "gsap/ScrollTrigger";
+import { loadMotion } from "../../shared/motion";
 import {
   observeNearViewport,
   observeVisibilityToggle,
@@ -30,16 +31,18 @@ export function ExperienceField({
 
     let disposed = false;
     let field: ExperienceTimelineScene | undefined;
-    let st: ScrollTrigger | undefined;
+    let st: ScrollTriggerType | undefined;
     let stopToggle: (() => void) | undefined;
 
     const stopObserving = observeNearViewport(wrap, () => {
       if (disposed) return;
       (async () => {
-        const [THREE, { ExperienceTimeline }] = await Promise.all([
-          import("three"),
-          import("./experienceTimeline.js"),
-        ]);
+        const [THREE, { ExperienceTimeline }, { ScrollTrigger }] =
+          await Promise.all([
+            import("three"),
+            import("./experienceTimeline.js"),
+            loadMotion(),
+          ]);
         if (disposed) return;
         const scene = new ExperienceTimeline({
           canvas,

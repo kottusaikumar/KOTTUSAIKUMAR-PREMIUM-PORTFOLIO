@@ -1,5 +1,6 @@
 import { useEffect, useRef } from "react";
-import { ScrollTrigger } from "gsap/ScrollTrigger";
+import type { ScrollTrigger as ScrollTriggerType } from "gsap/ScrollTrigger";
+import { loadMotion } from "../../shared/motion";
 import {
   observeNearViewport,
   observeVisibilityToggle,
@@ -35,15 +36,16 @@ export function SkillsField({
 
     let disposed = false;
     let field: AmbientFieldScene | undefined;
-    let st: ScrollTrigger | undefined;
+    let st: ScrollTriggerType | undefined;
     let stopToggle: (() => void) | undefined;
 
     const stopObserving = observeNearViewport(wrap, () => {
       if (disposed) return;
       (async () => {
-        const [THREE, { AmbientField }] = await Promise.all([
+        const [THREE, { AmbientField }, { ScrollTrigger }] = await Promise.all([
           import("three"),
           import("./ambientField.js"),
+          loadMotion(),
         ]);
         if (disposed) return;
         const scene = new AmbientField({

@@ -1,5 +1,6 @@
 import { useEffect, useRef } from "react";
-import { ScrollTrigger } from "gsap/ScrollTrigger";
+import type { ScrollTrigger as ScrollTriggerType } from "gsap/ScrollTrigger";
+import { loadMotion } from "../../shared/motion";
 import {
   observeNearViewport,
   observeVisibilityToggle,
@@ -18,16 +19,18 @@ export function ContactField({ className }: { className?: string }) {
 
     let disposed = false;
     let scrubber: ContactScrubberScene | undefined;
-    let st: ScrollTrigger | undefined;
+    let st: ScrollTriggerType | undefined;
     let stopToggle: (() => void) | undefined;
 
     const stopObserving = observeNearViewport(wrap, () => {
       if (disposed) return;
       (async () => {
-        const [THREE, { ContactScrubber }] = await Promise.all([
-          import("three"),
-          import("./contactScrubber.js"),
-        ]);
+        const [THREE, { ContactScrubber }, { ScrollTrigger }] =
+          await Promise.all([
+            import("three"),
+            import("./contactScrubber.js"),
+            loadMotion(),
+          ]);
         if (disposed) return;
         const scene = new ContactScrubber({
           canvas,
