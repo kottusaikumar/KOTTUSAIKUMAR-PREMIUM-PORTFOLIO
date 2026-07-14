@@ -25,10 +25,70 @@ function heroSrcSet(id: string, ext: "avif" | "webp" | "png"): string {
 // biggest one.
 const HERO_IMAGE_SIZES = "(max-width: 640px) 60vw, 45vw";
 
+// Every slide's wrapper keeps a *constant* box — left: 50%, height:
+// 100%, bottom: 0 — so `left`, `height`, and `bottom` never change
+// value once mounted and never appear in the `transition` list below.
+// What used to differ per role (a smaller/larger box positioned at a
+// different left/bottom/height) is instead expressed purely as a
+// `translate(...) scale(...)` on top of that fixed box, which are the
+// only two properties every role transitions on top of `filter` and
+// `opacity` — all four are compositor-only properties, so the browser
+// can run this animation on its own thread instead of triggering
+// layout/paint on every frame (this is what Lighthouse's "non-
+// composited animations" audit flags the old left/height/bottom
+// version for).
+//
+// The numbers below are the exact geometric equivalent of the old
+// per-role `left` / `height` / `bottom` / `scale` values — e.g. the
+// old mobile "center" slide was `left: 50%, height: 58%, bottom: 18%`
+// with an additional `scale(1.25)`; on a box that now always spans
+// the full container, that combination is reproduced by scaling the
+// box to 0.58 * 1.25 of the container and translating its (fixed)
+// center down/up by however far the old box's own center sat from
+// the container's vertical center.
+const HERO_GEOMETRY: Record<
+  "mobile" | "desktop",
+  Record<
+    "center" | "left" | "right" | "back",
+    {
+      x: number; // horizontal shift from center, in vw
+      y: number; // vertical shift from center, in % of container height
+      scale: number;
+    }
+  >
+> = {
+  mobile: {
+    center: { x: 0, y: 3, scale: 0.725 },
+    left: { x: -32, y: 12, scale: 0.16 },
+    right: { x: 32, y: 12, scale: 0.16 },
+    back: { x: 0, y: 14, scale: 0.12 },
+  },
+  desktop: {
+    center: { x: 0, y: 12, scale: 1.386 },
+    left: { x: -22, y: 26.5, scale: 0.27 },
+    right: { x: 22, y: 26.5, scale: 0.27 },
+    back: { x: 0, y: 30, scale: 0.2 },
+  },
+};
+
 export function ToonHubHero() {
   const [activeIndex, setActiveIndex] = useState(0);
   const [isAnimating, setIsAnimating] = useState(false);
-  const [isMobile, setIsMobile] = useState(false);
+  // Reading the actual viewport width up front (instead of defaulting
+  // to `false` and correcting in a post-mount effect) matters here:
+  // this app is a pure client-side SPA with no server-rendered HTML
+  // (see vite.config.ts), so there is no hydration step to keep in
+  // sync with — `window` is already available the moment this
+  // component's function body runs. Defaulting to `false` on a mobile
+  // device meant every mobile visit rendered the *desktop* carousel
+  // geometry (center slide at scale 1.65 / 84% height) for one frame,
+  // then immediately snapped to the mobile geometry (scale 1.25 / 58%
+  // height) once the resize-listener effect ran — a large, avoidable
+  // layout shift on exactly the viewport size PageSpeed's mobile
+  // Lighthouse run measures CLS against.
+  const [isMobile, setIsMobile] = useState(
+    () => typeof window !== "undefined" && window.innerWidth < 640,
+  );
   const [labelVisible, setLabelVisible] = useState(true);
   const autoRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const activeIndexRef = useRef(0);
@@ -112,58 +172,30 @@ export function ToonHubHero() {
   };
 
   const itemStyle = (role: string): React.CSSProperties => {
+    const g =
+      HERO_GEOMETRY[isMobile ? "mobile" : "desktop"][
+        role as "center" | "left" | "right" | "back"
+      ];
     const base: React.CSSProperties = {
       position: "absolute",
+      left: "50%",
+      bottom: 0,
+      height: "100%",
       aspectRatio: "0.6 / 1",
       transition:
-        "transform 600ms cubic-bezier(0.4,0,0.2,1), filter 600ms cubic-bezier(0.4,0,0.2,1), opacity 600ms cubic-bezier(0.4,0,0.2,1), left 600ms cubic-bezier(0.4,0,0.2,1)",
+        "transform 600ms cubic-bezier(0.4,0,0.2,1), filter 600ms cubic-bezier(0.4,0,0.2,1), opacity 600ms cubic-bezier(0.4,0,0.2,1)",
       willChange: "transform, filter, opacity",
+      transform: `translate(calc(-50% + ${g.x}vw), ${g.y}%) scale(${g.scale})`,
     };
     switch (role) {
       case "center":
-        return {
-          ...base,
-          transform: `translateX(-50%) scale(${isMobile ? 1.25 : 1.65})`,
-          filter: "none",
-          opacity: 1,
-          zIndex: 20,
-          left: "50%",
-          height: isMobile ? "58%" : "84%",
-          bottom: isMobile ? "18%" : "-4%",
-        };
+        return { ...base, filter: "none", opacity: 1, zIndex: 20 };
       case "left":
-        return {
-          ...base,
-          transform: "translateX(-50%) scale(1)",
-          filter: "blur(2px)",
-          opacity: 0.8,
-          zIndex: 10,
-          left: isMobile ? "18%" : "28%",
-          height: isMobile ? "16%" : "27%",
-          bottom: isMobile ? "30%" : "10%",
-        };
+        return { ...base, filter: "blur(2px)", opacity: 0.8, zIndex: 10 };
       case "right":
-        return {
-          ...base,
-          transform: "translateX(-50%) scale(1)",
-          filter: "blur(2px)",
-          opacity: 0.8,
-          zIndex: 10,
-          left: isMobile ? "82%" : "72%",
-          height: isMobile ? "16%" : "27%",
-          bottom: isMobile ? "30%" : "10%",
-        };
+        return { ...base, filter: "blur(2px)", opacity: 0.8, zIndex: 10 };
       case "back":
-        return {
-          ...base,
-          transform: "translateX(-50%) scale(1)",
-          filter: "blur(4px)",
-          opacity: 0.6,
-          zIndex: 5,
-          left: "50%",
-          height: isMobile ? "12%" : "20%",
-          bottom: isMobile ? "30%" : "10%",
-        };
+        return { ...base, filter: "blur(4px)", opacity: 0.6, zIndex: 5 };
       default:
         return base;
     }
@@ -370,7 +402,6 @@ export function ToonHubHero() {
             transform: "translateX(-50%)",
             zIndex: 60,
             display: "flex",
-            gap: "0.5rem",
             alignItems: "center",
           }}
         >
@@ -384,24 +415,43 @@ export function ToonHubHero() {
               }}
               aria-label={`Go to slide ${i + 1}`}
               style={{
-                width:
-                  i === activeIndex
-                    ? isMobile
-                      ? "20px"
-                      : "28px"
-                    : isMobile
-                      ? "6px"
-                      : "8px",
-                height: isMobile ? "6px" : "8px",
-                borderRadius: "99px",
-                backgroundColor:
-                  i === activeIndex ? "white" : "rgba(255,255,255,0.45)",
+                // The visible pill (below) keeps its original small
+                // size/appearance; the button itself grows to a
+                // ~32x32px hit target via this fixed box + centering,
+                // which is what a tap actually lands on. Lighthouse's
+                // accessibility audit flags anything smaller than
+                // roughly 24x24 CSS px as a touch-target failure.
+                width: "32px",
+                height: "32px",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                background: "none",
                 border: "none",
                 cursor: "pointer",
                 padding: 0,
-                transition: "width 300ms ease, background-color 300ms ease",
               }}
-            />
+            >
+              <span
+                aria-hidden="true"
+                style={{
+                  display: "block",
+                  width:
+                    i === activeIndex
+                      ? isMobile
+                        ? "20px"
+                        : "28px"
+                      : isMobile
+                        ? "6px"
+                        : "8px",
+                  height: isMobile ? "6px" : "8px",
+                  borderRadius: "99px",
+                  backgroundColor:
+                    i === activeIndex ? "white" : "rgba(255,255,255,0.45)",
+                  transition: "width 300ms ease, background-color 300ms ease",
+                }}
+              />
+            </button>
           ))}
         </div>
 

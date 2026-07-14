@@ -73,6 +73,22 @@ export default defineConfig({
     // (native classes, native async/await, etc).
     target: "es2020",
     cssMinify: "lightningcss",
+    modulePreload: {
+      // Vite's default behaviour adds a <link rel="modulepreload"> for
+      // every chunk reachable from the entry module graph, including
+      // ones only ever reached through a dynamic import() (see
+      // src/shared/motion.ts). That's normally a helpful prefetch hint,
+      // but motion-vendor (GSAP + ScrollTrigger + Lenis, ~50KB gzip) is
+      // intentionally not needed until after first paint — on a
+      // throttled mobile connection, preloading it anyway means it
+      // competes for bandwidth against react-vendor/tanstack-vendor/
+      // vendor, the chunks the initial render actually is blocked on.
+      // Filtering it out of the injected list lets the browser fetch it
+      // lazily, on its own schedule, once the dynamic import actually
+      // runs post-mount.
+      resolveDependencies: (_filename, deps) =>
+        deps.filter((dep) => !dep.includes("motion-vendor")),
+    },
     // three.js alone is ~185kB gzipped; splitting it (and the other big,
     // rarely-changing vendor libs) into their own chunks means a content
     // change in app code doesn't bust the cache for vendor code the

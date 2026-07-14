@@ -34,7 +34,7 @@
 .skills::before {
   content: "";
   position: absolute;
-  inset: 0;
+  inset: -50%;
   pointer-events: none;
   background:
     linear-gradient(135deg, rgba(4, 6, 10, 0.58), rgba(4, 6, 10, 0.42)),
@@ -47,25 +47,34 @@
       #00eff8,
       #9400f8
     );
-  background-size: 100% 100%, 400% 400%;
+  /* Fixed, un-animated background-size/position: the drifting look
+     now comes entirely from animating `transform` on this oversized
+     (inset: -50%, i.e. 2x the section in both dimensions) layer, which
+     .skills' own `overflow: hidden` clips back down to the section's
+     bounds. background-position is a paint-triggering property —
+     animating it every frame for 30s on an infinite loop is what
+     Lighthouse's non-composited-animations audit flagged; transform
+     is compositor-only. */
+  background-size: 100% 100%, 200% 200%;
   background-position: 0% 0%, 0% 50%;
   animation: skillsGradientShift 30s ease infinite;
+  will-change: transform;
 }
 @keyframes skillsGradientShift {
   0% {
-    background-position: 0% 0%, 0% 50%;
+    transform: translate(0%, 0%) scale(1);
   }
   25% {
-    background-position: 0% 0%, 50% 100%;
+    transform: translate(-4%, 4%) scale(1.02);
   }
   50% {
-    background-position: 0% 0%, 100% 50%;
+    transform: translate(4%, 4%) scale(1.04);
   }
   75% {
-    background-position: 0% 0%, 50% 0%;
+    transform: translate(4%, -4%) scale(1.02);
   }
   100% {
-    background-position: 0% 0%, 0% 50%;
+    transform: translate(0%, 0%) scale(1);
   }
 }
 .skills-header,

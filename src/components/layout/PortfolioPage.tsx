@@ -23,9 +23,9 @@ import {
   type MouseEvent as ReactMouseEvent,
 } from "react";
 import { ExternalLink, Info, Menu, X } from "lucide-react";
-import gsap from "gsap";
-import { ScrollTrigger } from "gsap/ScrollTrigger";
-import Lenis from "lenis";
+import type gsapType from "gsap";
+import type Lenis from "lenis";
+import { loadMotion } from "../../shared/motion";
 import "../../styles/portfolio/index.css";
 
 import { PROJECTS } from "../../features/projects/projects.data";
@@ -54,8 +54,6 @@ import { PortfolioIntro } from "./PortfolioIntro";
 const Toaster = lazy(() =>
   import("../ui/sonner").then((mod) => ({ default: mod.Toaster })),
 );
-
-gsap.registerPlugin(ScrollTrigger);
 
 const PROJECT_CARD_COLORS = [
   "252, 139, 139",
@@ -199,44 +197,55 @@ export function PortfolioPage() {
     };
   }, []);
 
-  /* Smooth scroll */
+  /* Smooth scroll
+     Deferred behind loadMotion() (see src/shared/motion.ts) — Lenis and
+     ScrollTrigger are not needed for first paint, only once the visitor
+     actually scrolls, so this no longer holds up the initial render. */
   useEffect(() => {
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
-    const lenis = new Lenis({
-      duration: 1.45,
-      // A slightly gentler exponential-out — the first ~15% of the
-      // curve is flatter (less initial snap) so a wheel tick reads
-      // as a soft push rather than a jump, then settles into the
-      // same fast decay. Heavier deceleration, no abrupt stop.
-      easing: (t: number) => 1 - Math.pow(1 - t, 4),
-      smoothWheel: true,
-      wheelMultiplier: 0.9,
-      touchMultiplier: 1.15,
-    });
-    lenisRef.current = lenis;
-    lenis.on("scroll", ScrollTrigger.update);
-    gsap.ticker.add((time) => lenis.raf(time * 1000));
-    gsap.ticker.lagSmoothing(0);
+    let cancelled = false;
+    let lenis: Lenis | null = null;
+    let refresh: (() => void) | null = null;
 
-    // Every ScrollTrigger start/end position on this page is computed
-    // once, based on layout at the moment each effect runs. Web fonts
-    // swapping in (reflowing text height), the hero's character images,
-    // and the project ring's videos all finish loading *after* that —
-    // so without an explicit refresh, trigger positions drift out of
-    // sync with the real, final page height and animations start firing
-    // a beat early or late (the same root cause behind the Proof Wall
-    // counters reading stale state, just for scroll position instead of
-    // a parsed value). Recompute once fonts are actually painted, and
-    // once more on window "load" as a catch-all for anything else still
-    // settling (images, the initial batch of video metadata).
-    const refresh = () => ScrollTrigger.refresh();
-    document.fonts?.ready?.then(refresh);
-    window.addEventListener("load", refresh);
+    loadMotion().then(({ gsap, ScrollTrigger, Lenis: LenisCtor }) => {
+      if (cancelled) return;
+      lenis = new LenisCtor({
+        duration: 1.45,
+        // A slightly gentler exponential-out — the first ~15% of the
+        // curve is flatter (less initial snap) so a wheel tick reads
+        // as a soft push rather than a jump, then settles into the
+        // same fast decay. Heavier deceleration, no abrupt stop.
+        easing: (t: number) => 1 - Math.pow(1 - t, 4),
+        smoothWheel: true,
+        wheelMultiplier: 0.9,
+        touchMultiplier: 1.15,
+      });
+      lenisRef.current = lenis;
+      lenis.on("scroll", ScrollTrigger.update);
+      gsap.ticker.add((time) => lenis!.raf(time * 1000));
+      gsap.ticker.lagSmoothing(0);
+
+      // Every ScrollTrigger start/end position on this page is computed
+      // once, based on layout at the moment each effect runs. Web fonts
+      // swapping in (reflowing text height), the hero's character images,
+      // and the project ring's videos all finish loading *after* that —
+      // so without an explicit refresh, trigger positions drift out of
+      // sync with the real, final page height and animations start firing
+      // a beat early or late (the same root cause behind the Proof Wall
+      // counters reading stale state, just for scroll position instead of
+      // a parsed value). Recompute once fonts are actually painted, and
+      // once more on window "load" as a catch-all for anything else still
+      // settling (images, the initial batch of video metadata).
+      refresh = () => ScrollTrigger.refresh();
+      document.fonts?.ready?.then(refresh);
+      window.addEventListener("load", refresh);
+    });
 
     return () => {
-      lenis.destroy();
+      cancelled = true;
+      lenis?.destroy();
       lenisRef.current = null;
-      window.removeEventListener("load", refresh);
+      if (refresh) window.removeEventListener("load", refresh);
     };
   }, []);
 
@@ -438,95 +447,141 @@ export function PortfolioPage() {
     };
   }, [projectView]);
 
-  /* Premium section motion director */
+  /* Premium section motion director
+     Deferred behind loadMotion() — see src/shared/motion.ts. This is
+     the largest of the GSAP/ScrollTrigger effects; none of it needs to
+     run before first paint, so it no longer blocks it. */
   useEffect(() => {
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
 
-    const ctx = gsap.context(() => {
-      gsap.utils.toArray<HTMLElement>(".premium-3d-scene").forEach((scene) => {
-        const section = scene.closest(".section-world");
-        gsap.fromTo(
-          scene,
-          { yPercent: 9, scale: 1.08, opacity: 0.45, rotateX: 5 },
-          {
-            yPercent: -7,
-            scale: 1,
-            opacity: 1,
-            rotateX: 0,
-            ease: "none",
-            scrollTrigger: {
-              trigger: section,
-              start: "top bottom",
-              end: "bottom top",
-              scrub: 1.1,
-            },
-          },
-        );
-      });
+    let cancelled = false;
+    let ctx: { revert: () => void } | undefined;
 
-      gsap.utils
-        .toArray<HTMLElement>(".portal-ring, .circuit-node")
-        .forEach((el, i) => {
-          gsap.to(el, {
-            y: i % 2 ? -22 : 22,
-            x: i % 3 ? 14 : -14,
-            rotate: i % 2 ? 4 : -4,
-            ease: "sine.inOut",
-            scrollTrigger: {
-              trigger: el.closest(".section-world"),
-              start: "top bottom",
-              end: "bottom top",
-              scrub: 1.4,
+    loadMotion().then(({ gsap }) => {
+      if (cancelled) return;
+      ctx = gsap.context(() => {
+        gsap.utils
+          .toArray<HTMLElement>(".premium-3d-scene")
+          .forEach((scene) => {
+            const section = scene.closest(".section-world");
+            gsap.fromTo(
+              scene,
+              { yPercent: 9, scale: 1.08, opacity: 0.45, rotateX: 5 },
+              {
+                yPercent: -7,
+                scale: 1,
+                opacity: 1,
+                rotateX: 0,
+                ease: "none",
+                scrollTrigger: {
+                  trigger: section,
+                  start: "top bottom",
+                  end: "bottom top",
+                  scrub: 1.1,
+                },
+              },
+            );
+          });
+
+        gsap.utils
+          .toArray<HTMLElement>(".portal-ring, .circuit-node")
+          .forEach((el, i) => {
+            gsap.to(el, {
+              y: i % 2 ? -22 : 22,
+              x: i % 3 ? 14 : -14,
+              rotate: i % 2 ? 4 : -4,
+              ease: "sine.inOut",
+              scrollTrigger: {
+                trigger: el.closest(".section-world"),
+                start: "top bottom",
+                end: "bottom top",
+                scrub: 1.4,
+              },
+            });
+          });
+
+        gsap.utils.toArray<HTMLElement>(".section-gateway").forEach((gate) => {
+          gsap.fromTo(
+            gate,
+            { clipPath: "inset(0 50% 0 50%)", opacity: 0.2, scaleX: 0.75 },
+            {
+              clipPath: "inset(0 0% 0 0%)",
+              opacity: 1,
+              scaleX: 1,
+              ease: "power2.out",
+              scrollTrigger: {
+                trigger: gate.parentElement,
+                start: "top 86%",
+                end: "top 30%",
+                scrub: 0.7,
+              },
             },
+          );
+        });
+
+        /* Unique gateway-curtain reveal per section ───────────── */
+        gsap.utils.toArray<HTMLElement>(".curtain-shutter").forEach((c) => {
+          const sec = c.closest(".section-world");
+          const tl = {
+            trigger: sec,
+            start: "top 92%",
+            end: "top 18%",
+            scrub: 0.6,
+          };
+          gsap.to(c.querySelector(".curtain-panel-l"), {
+            xPercent: -100,
+            ease: "none",
+            scrollTrigger: tl,
+          });
+          gsap.to(c.querySelector(".curtain-panel-r"), {
+            xPercent: 100,
+            ease: "none",
+            scrollTrigger: tl,
           });
         });
 
-      gsap.utils.toArray<HTMLElement>(".section-gateway").forEach((gate) => {
-        gsap.fromTo(
-          gate,
-          { clipPath: "inset(0 50% 0 50%)", opacity: 0.2, scaleX: 0.75 },
-          {
-            clipPath: "inset(0 0% 0 0%)",
-            opacity: 1,
-            scaleX: 1,
-            ease: "power2.out",
-            scrollTrigger: {
-              trigger: gate.parentElement,
-              start: "top 86%",
-              end: "top 30%",
-              scrub: 0.7,
+        gsap.utils.toArray<HTMLElement>(".curtain-iris").forEach((c) => {
+          gsap.fromTo(
+            c,
+            { clipPath: "circle(150% at 50% 50%)" },
+            {
+              clipPath: "circle(0% at 50% 50%)",
+              ease: "none",
+              scrollTrigger: {
+                trigger: c.closest(".section-world"),
+                start: "top 92%",
+                end: "top 16%",
+                scrub: 0.6,
+              },
             },
-          },
-        );
-      });
-
-      /* Unique gateway-curtain reveal per section ───────────── */
-      gsap.utils.toArray<HTMLElement>(".curtain-shutter").forEach((c) => {
-        const sec = c.closest(".section-world");
-        const tl = {
-          trigger: sec,
-          start: "top 92%",
-          end: "top 18%",
-          scrub: 0.6,
-        };
-        gsap.to(c.querySelector(".curtain-panel-l"), {
-          xPercent: -100,
-          ease: "none",
-          scrollTrigger: tl,
+          );
         });
-        gsap.to(c.querySelector(".curtain-panel-r"), {
-          xPercent: 100,
-          ease: "none",
-          scrollTrigger: tl,
-        });
-      });
 
-      gsap.utils.toArray<HTMLElement>(".curtain-iris").forEach((c) => {
-        gsap.fromTo(
-          c,
-          { clipPath: "circle(150% at 50% 50%)" },
-          {
-            clipPath: "circle(0% at 50% 50%)",
+        gsap.utils.toArray<HTMLElement>(".curtain-dissolve").forEach((c) => {
+          gsap.fromTo(
+            c,
+            { opacity: 1, scale: 1, filter: "blur(0px)" },
+            {
+              opacity: 0,
+              scale: 1.32,
+              filter: "blur(28px)",
+              ease: "none",
+              scrollTrigger: {
+                trigger: c.closest(".section-world"),
+                start: "top 92%",
+                end: "top 20%",
+                scrub: 0.6,
+              },
+            },
+          );
+        });
+
+        gsap.utils.toArray<HTMLElement>(".curtain-blinds").forEach((c) => {
+          const bars = c.querySelectorAll<HTMLElement>(".curtain-bar");
+          gsap.set(bars, { transformOrigin: "top" });
+          gsap.to(bars, {
+            scaleY: 0,
+            stagger: 0.045,
             ease: "none",
             scrollTrigger: {
               trigger: c.closest(".section-world"),
@@ -534,434 +589,405 @@ export function PortfolioPage() {
               end: "top 16%",
               scrub: 0.6,
             },
-          },
-        );
-      });
+          });
+        });
 
-      gsap.utils.toArray<HTMLElement>(".curtain-dissolve").forEach((c) => {
-        gsap.fromTo(
-          c,
-          { opacity: 1, scale: 1, filter: "blur(0px)" },
-          {
-            opacity: 0,
-            scale: 1.32,
-            filter: "blur(28px)",
-            ease: "none",
-            scrollTrigger: {
-              trigger: c.closest(".section-world"),
-              start: "top 92%",
-              end: "top 20%",
-              scrub: 0.6,
-            },
-          },
-        );
-      });
-
-      gsap.utils.toArray<HTMLElement>(".curtain-blinds").forEach((c) => {
-        const bars = c.querySelectorAll<HTMLElement>(".curtain-bar");
-        gsap.set(bars, { transformOrigin: "top" });
-        gsap.to(bars, {
-          scaleY: 0,
-          stagger: 0.045,
-          ease: "none",
-          scrollTrigger: {
+        gsap.utils.toArray<HTMLElement>(".curtain-scanline").forEach((c) => {
+          const tl = {
             trigger: c.closest(".section-world"),
             start: "top 92%",
             end: "top 16%",
             scrub: 0.6,
-          },
-        });
-      });
-
-      gsap.utils.toArray<HTMLElement>(".curtain-scanline").forEach((c) => {
-        const tl = {
-          trigger: c.closest(".section-world"),
-          start: "top 92%",
-          end: "top 16%",
-          scrub: 0.6,
-        };
-        gsap.fromTo(
-          c,
-          { clipPath: "inset(0% 0 0% 0)" },
-          { clipPath: "inset(100% 0 0% 0)", ease: "none", scrollTrigger: tl },
-        );
-        gsap.fromTo(
-          c.querySelector(".curtain-scan-line"),
-          { top: "0%", opacity: 1 },
-          { top: "100%", opacity: 0, ease: "none", scrollTrigger: tl },
-        );
-      });
-
-      gsap.set(".skills-stage", {
-        perspective: 1400,
-        transformStyle: "preserve-3d",
-      });
-      gsap.set(skillsSlabRef.current, {
-        transformPerspective: 1400,
-        transformStyle: "preserve-3d",
-        rotateX: -10,
-        rotateY: 13,
-        rotateZ: -1.5,
-        y: 30,
-      });
-      gsap.to(skillsSlabRef.current, {
-        rotateX: 9,
-        rotateY: -14,
-        rotateZ: 1.5,
-        y: -22,
-        ease: "none",
-        scrollTrigger: {
-          trigger: "#skills",
-          start: "top 78%",
-          end: "bottom 22%",
-          scrub: 1.1,
-        },
-      });
-
-      const skillCells = gsap.utils.toArray<HTMLElement>(".skill-cell");
-      gsap.set(skillCells, {
-        transformStyle: "preserve-3d",
-        transformPerspective: 900,
-        transformOrigin: "50% 50%",
-      });
-      // (Entrance fade removed — cards stay visible at all times; the
-      // scroll-scrubbed pulse below is the only per-cell scroll effect,
-      // so scrolling up/down only ever moves which cell is zoomed in,
-      // never makes cards appear/disappear.)
-
-      const skillPulseTl = gsap.timeline({
-        scrollTrigger: {
-          trigger: "#skills",
-          start: "top 78%",
-          end: "bottom 16%",
-          scrub: 0.25,
-        },
-      });
-      skillCells.forEach((cell, i) => {
-        const step = i * 0.135;
-        const swing = i % 2 === 0 ? 4 : -4;
-        skillPulseTl
-          .to(
-            cell,
-            {
-              scale: 1.28,
-              z: 120,
-              rotateX: -5,
-              rotateY: swing,
-              opacity: 1,
-              filter: "brightness(1.16)",
-              boxShadow:
-                "0 26px 78px rgba(61,255,208,.22), 0 0 0 1px rgba(61,255,208,.34)",
-              ease: "power2.out",
-              duration: 0.11,
-            },
-            step,
-          )
-          .to(
-            cell,
-            {
-              scale: 0.98,
-              z: 0,
-              rotateX: 0,
-              rotateY: 0,
-              filter: "brightness(1)",
-              boxShadow: "",
-              ease: "power2.inOut",
-              duration: 0.13,
-            },
-            step + 0.12,
+          };
+          gsap.fromTo(
+            c,
+            { clipPath: "inset(0% 0 0% 0)" },
+            { clipPath: "inset(100% 0 0% 0)", ease: "none", scrollTrigger: tl },
           );
-      });
+          gsap.fromTo(
+            c.querySelector(".curtain-scan-line"),
+            { top: "0%", opacity: 1 },
+            { top: "100%", opacity: 0, ease: "none", scrollTrigger: tl },
+          );
+        });
 
-      gsap.utils.toArray<HTMLElement>(".experience-card").forEach((card, i) => {
-        gsap.from(card, {
-          rotateX: -18,
-          rotateY: i % 2 ? -8 : 8,
-          y: 70,
-          opacity: 0,
-          transformOrigin: "50% 0%",
-          ease: "power3.out",
+        gsap.set(".skills-stage", {
+          perspective: 1400,
+          transformStyle: "preserve-3d",
+        });
+        gsap.set(skillsSlabRef.current, {
+          transformPerspective: 1400,
+          transformStyle: "preserve-3d",
+          rotateX: -10,
+          rotateY: 13,
+          rotateZ: -1.5,
+          y: 30,
+        });
+        gsap.to(skillsSlabRef.current, {
+          rotateX: 9,
+          rotateY: -14,
+          rotateZ: 1.5,
+          y: -22,
+          ease: "none",
           scrollTrigger: {
-            trigger: card,
-            start: "top 82%",
-            end: "top 46%",
-            scrub: 0.8,
+            trigger: "#skills",
+            start: "top 78%",
+            end: "bottom 22%",
+            scrub: 1.1,
           },
         });
-      });
 
-      gsap.utils.toArray<HTMLElement>(".process-card").forEach((card, i) => {
-        gsap.from(card, {
-          y: i % 2 ? 80 : -80,
-          rotateZ: i % 2 ? 4 : -4,
-          opacity: 0,
-          ease: "power3.out",
+        const skillCells = gsap.utils.toArray<HTMLElement>(".skill-cell");
+        gsap.set(skillCells, {
+          transformStyle: "preserve-3d",
+          transformPerspective: 900,
+          transformOrigin: "50% 50%",
+        });
+        // (Entrance fade removed — cards stay visible at all times; the
+        // scroll-scrubbed pulse below is the only per-cell scroll effect,
+        // so scrolling up/down only ever moves which cell is zoomed in,
+        // never makes cards appear/disappear.)
+
+        const skillPulseTl = gsap.timeline({
           scrollTrigger: {
-            trigger: card,
-            start: "top 86%",
-            end: "top 48%",
-            scrub: 0.9,
+            trigger: "#skills",
+            start: "top 78%",
+            end: "bottom 16%",
+            scrub: 0.25,
           },
         });
-      });
-      gsap.to(".process-rail-line", {
-        scaleX: 1,
-        ease: "none",
-        scrollTrigger: {
-          trigger: "#process",
-          start: "top 70%",
-          end: "bottom 45%",
-          scrub: true,
-        },
-      });
+        skillCells.forEach((cell, i) => {
+          const step = i * 0.135;
+          const swing = i % 2 === 0 ? 4 : -4;
+          skillPulseTl
+            .to(
+              cell,
+              {
+                scale: 1.28,
+                z: 120,
+                rotateX: -5,
+                rotateY: swing,
+                opacity: 1,
+                filter: "brightness(1.16)",
+                boxShadow:
+                  "0 26px 78px rgba(61,255,208,.22), 0 0 0 1px rgba(61,255,208,.34)",
+                ease: "power2.out",
+                duration: 0.11,
+              },
+              step,
+            )
+            .to(
+              cell,
+              {
+                scale: 0.98,
+                z: 0,
+                rotateX: 0,
+                rotateY: 0,
+                filter: "brightness(1)",
+                boxShadow: "",
+                ease: "power2.inOut",
+                duration: 0.13,
+              },
+              step + 0.12,
+            );
+        });
 
-      /* About split-slide transition, adapted from the supplied nested
+        gsap.utils
+          .toArray<HTMLElement>(".experience-card")
+          .forEach((card, i) => {
+            gsap.from(card, {
+              rotateX: -18,
+              rotateY: i % 2 ? -8 : 8,
+              y: 70,
+              opacity: 0,
+              transformOrigin: "50% 0%",
+              ease: "power3.out",
+              scrollTrigger: {
+                trigger: card,
+                start: "top 82%",
+                end: "top 46%",
+                scrub: 0.8,
+              },
+            });
+          });
+
+        gsap.utils.toArray<HTMLElement>(".process-card").forEach((card, i) => {
+          gsap.from(card, {
+            y: i % 2 ? 80 : -80,
+            rotateZ: i % 2 ? 4 : -4,
+            opacity: 0,
+            ease: "power3.out",
+            scrollTrigger: {
+              trigger: card,
+              start: "top 86%",
+              end: "top 48%",
+              scrub: 0.9,
+            },
+          });
+        });
+        gsap.to(".process-rail-line", {
+          scaleX: 1,
+          ease: "none",
+          scrollTrigger: {
+            trigger: "#process",
+            start: "top 70%",
+            end: "bottom 45%",
+            scrub: true,
+          },
+        });
+
+        /* About split-slide transition, adapted from the supplied nested
          outer/inner wrapper demo. The existing flip card and biography are
          the two slides, so no demo images or scroll-hijacking Observer are
          introduced into the portfolio. */
-      const aboutIllustration = document.querySelector<HTMLElement>(
-        "#about .about-illustration",
-      );
-      const aboutFlipCard = document.querySelector<HTMLElement>(
-        "#about .about-flip-card",
-      );
-      const aboutCopy =
-        document.querySelector<HTMLElement>("#about .about-copy");
-      const aboutTitle = document.querySelector<HTMLElement>(
-        "#about .about-title",
-      );
-      const aboutCopyItems = gsap.utils.toArray<HTMLElement>(
-        "#about .section-eyebrow, #about .about-lede, #about .about-cta",
-      );
+        const aboutIllustration = document.querySelector<HTMLElement>(
+          "#about .about-illustration",
+        );
+        const aboutFlipCard = document.querySelector<HTMLElement>(
+          "#about .about-flip-card",
+        );
+        const aboutCopy =
+          document.querySelector<HTMLElement>("#about .about-copy");
+        const aboutTitle = document.querySelector<HTMLElement>(
+          "#about .about-title",
+        );
+        const aboutCopyItems = gsap.utils.toArray<HTMLElement>(
+          "#about .section-eyebrow, #about .about-lede, #about .about-cta",
+        );
 
-      if (aboutIllustration && aboutFlipCard && aboutCopy && aboutTitle) {
-        const aboutTransition = gsap.timeline({
-          scrollTrigger: {
-            trigger: "#about",
-            start: "top 88%",
-            end: "top 18%",
-            scrub: 1.05,
-            invalidateOnRefresh: true,
-          },
-          defaults: { ease: "expo.inOut" },
-        });
-
-        aboutTransition
-          .fromTo(
-            aboutIllustration,
-            {
-              clipPath: "inset(0% 100% 0% 0% round 26px)",
-              xPercent: -18,
-            },
-            {
-              clipPath: "inset(0% 0% 0% 0% round 26px)",
-              xPercent: 0,
-              duration: 1,
-            },
-            0,
-          )
-          .fromTo(
-            aboutFlipCard,
-            { xPercent: 34, scale: 1.65, filter: "blur(7px)" },
-            {
-              xPercent: 0,
-              scale: 1,
-              filter: "blur(0px)",
-              duration: 1,
-            },
-            0,
-          )
-          .fromTo(
-            aboutCopy,
-            {
-              clipPath: "inset(0% 0% 0% 100% round 22px)",
-              xPercent: 18,
-            },
-            {
-              clipPath: "inset(0% 0% 0% 0% round 22px)",
-              xPercent: 0,
-              duration: 1,
-            },
-            0,
-          )
-          .fromTo(
-            aboutTitle,
-            { xPercent: 28, opacity: 0, letterSpacing: "0.05em" },
-            {
-              xPercent: 0,
-              opacity: 1,
-              letterSpacing: "-0.015em",
-              duration: 0.82,
-            },
-            0.08,
-          )
-          .fromTo(
-            aboutCopyItems,
-            { x: 34, opacity: 0 },
-            {
-              x: 0,
-              opacity: 1,
-              stagger: 0.055,
-              duration: 0.62,
-            },
-            0.22,
-          );
-      }
-
-      gsap.utils.toArray<HTMLElement>(".work-item").forEach((item, i) => {
-        const media = item.querySelector(".work-item-media");
-        const info = item.querySelector(".work-item-info");
-        const fromLeft = i % 2 === 0;
-
-        gsap.set(item, {
-          transformStyle: "preserve-3d",
-          transformPerspective: 1200,
-          transformOrigin: "50% 50%",
-        });
-
-        gsap.fromTo(
-          item,
-          {
-            xPercent: fromLeft ? -22 : 22,
-            rotateY: fromLeft ? 18 : -18,
-            scale: 0.9,
-            opacity: 0,
-          },
-          {
-            xPercent: 0,
-            rotateY: 0,
-            scale: 1,
-            opacity: 1,
-            ease: "power3.out",
+        if (aboutIllustration && aboutFlipCard && aboutCopy && aboutTitle) {
+          const aboutTransition = gsap.timeline({
             scrollTrigger: {
-              trigger: item,
+              trigger: "#about",
               start: "top 88%",
-              end: "top 42%",
-              scrub: 0.75,
+              end: "top 18%",
+              scrub: 1.05,
+              invalidateOnRefresh: true,
             },
-          },
-        );
+            defaults: { ease: "expo.inOut" },
+          });
 
-        gsap.fromTo(
-          media,
-          {
-            clipPath: "inset(18% 14% 18% 14% round 30px)",
-            z: -130,
-            scale: 0.94,
-          },
-          {
-            clipPath: "inset(0% 0% 0% 0% round 30px)",
-            z: 0,
-            scale: 1,
+          aboutTransition
+            .fromTo(
+              aboutIllustration,
+              {
+                clipPath: "inset(0% 100% 0% 0% round 26px)",
+                xPercent: -18,
+              },
+              {
+                clipPath: "inset(0% 0% 0% 0% round 26px)",
+                xPercent: 0,
+                duration: 1,
+              },
+              0,
+            )
+            .fromTo(
+              aboutFlipCard,
+              { xPercent: 34, scale: 1.65, filter: "blur(7px)" },
+              {
+                xPercent: 0,
+                scale: 1,
+                filter: "blur(0px)",
+                duration: 1,
+              },
+              0,
+            )
+            .fromTo(
+              aboutCopy,
+              {
+                clipPath: "inset(0% 0% 0% 100% round 22px)",
+                xPercent: 18,
+              },
+              {
+                clipPath: "inset(0% 0% 0% 0% round 22px)",
+                xPercent: 0,
+                duration: 1,
+              },
+              0,
+            )
+            .fromTo(
+              aboutTitle,
+              { xPercent: 28, opacity: 0, letterSpacing: "0.05em" },
+              {
+                xPercent: 0,
+                opacity: 1,
+                letterSpacing: "-0.015em",
+                duration: 0.82,
+              },
+              0.08,
+            )
+            .fromTo(
+              aboutCopyItems,
+              { x: 34, opacity: 0 },
+              {
+                x: 0,
+                opacity: 1,
+                stagger: 0.055,
+                duration: 0.62,
+              },
+              0.22,
+            );
+        }
+
+        gsap.utils.toArray<HTMLElement>(".work-item").forEach((item, i) => {
+          const media = item.querySelector(".work-item-media");
+          const info = item.querySelector(".work-item-info");
+          const fromLeft = i % 2 === 0;
+
+          gsap.set(item, {
+            transformStyle: "preserve-3d",
+            transformPerspective: 1200,
+            transformOrigin: "50% 50%",
+          });
+
+          gsap.fromTo(
+            item,
+            {
+              xPercent: fromLeft ? -22 : 22,
+              rotateY: fromLeft ? 18 : -18,
+              scale: 0.9,
+              opacity: 0,
+            },
+            {
+              xPercent: 0,
+              rotateY: 0,
+              scale: 1,
+              opacity: 1,
+              ease: "power3.out",
+              scrollTrigger: {
+                trigger: item,
+                start: "top 88%",
+                end: "top 42%",
+                scrub: 0.75,
+              },
+            },
+          );
+
+          gsap.fromTo(
+            media,
+            {
+              clipPath: "inset(18% 14% 18% 14% round 30px)",
+              z: -130,
+              scale: 0.94,
+            },
+            {
+              clipPath: "inset(0% 0% 0% 0% round 30px)",
+              z: 0,
+              scale: 1,
+              ease: "power3.out",
+              scrollTrigger: {
+                trigger: item,
+                start: "top 82%",
+                end: "top 45%",
+                scrub: 0.9,
+              },
+            },
+          );
+
+          gsap.fromTo(
+            media?.querySelector("img") ?? [],
+            { scale: 1.16, yPercent: -4 },
+            {
+              scale: 1.03,
+              yPercent: 4,
+              ease: "none",
+              scrollTrigger: {
+                trigger: item,
+                start: "top bottom",
+                end: "bottom top",
+                scrub: true,
+              },
+            },
+          );
+
+          gsap.from(info, {
+            x: fromLeft ? 56 : -56,
+            opacity: 0,
             ease: "power3.out",
+            scrollTrigger: { trigger: item, start: "top 78%" },
+          });
+
+          gsap.to(item, {
+            scale: 1.035,
+            z: 70,
+            ease: "power1.inOut",
             scrollTrigger: {
               trigger: item,
-              start: "top 82%",
-              end: "top 45%",
-              scrub: 0.9,
-            },
-          },
-        );
-
-        gsap.fromTo(
-          media?.querySelector("img") ?? [],
-          { scale: 1.16, yPercent: -4 },
-          {
-            scale: 1.03,
-            yPercent: 4,
-            ease: "none",
-            scrollTrigger: {
-              trigger: item,
-              start: "top bottom",
-              end: "bottom top",
-              scrub: true,
-            },
-          },
-        );
-
-        gsap.from(info, {
-          x: fromLeft ? 56 : -56,
-          opacity: 0,
-          ease: "power3.out",
-          scrollTrigger: { trigger: item, start: "top 78%" },
-        });
-
-        gsap.to(item, {
-          scale: 1.035,
-          z: 70,
-          ease: "power1.inOut",
-          scrollTrigger: {
-            trigger: item,
-            start: "top 58%",
-            end: "bottom 42%",
-            scrub: 0.35,
-            toggleActions: "play reverse play reverse",
-          },
-        });
-      });
-
-      gsap.utils.toArray<HTMLElement>(".proof-card").forEach((card, i) => {
-        gsap.from(card, {
-          opacity: 0,
-          scale: 0.72,
-          rotate: i % 2 ? 7 : -7,
-          y: 50,
-          ease: "back.out(1.5)",
-          scrollTrigger: { trigger: card, start: "top 82%" },
-        });
-
-        // Count-up on the headline number — same "0 → 275 / 480 / 600"
-        // odometer effect as the reference site's animated stat cards.
-        // Parses a leading number (int or decimal) plus a trailing
-        // suffix (%, +, or none) and animates a plain counter object,
-        // writing the formatted text back on every tick.
-        //
-        // Reads the original value from `data-value` (set straight from
-        // PROOF data), never from the element's live textContent. GSAP
-        // renders a scroll-triggered tween's frame-0 state immediately
-        // on creation, so the very first thing textContent ever shows is
-        // the "0" starting point — if this effect ever ran a second time
-        // on an already-mounted card (StrictMode's dev double-invoke,
-        // Fast Refresh, etc.), reading textContent back would parse that
-        // leftover "0" as the new target and permanently lock the card
-        // at zero. data-value is never touched by the animation, so it's
-        // always the true source value no matter how many times this runs.
-        const valueEl = card.querySelector<HTMLElement>("strong");
-        const raw = valueEl?.dataset.value?.trim() ?? "";
-        const match = raw.match(/^(\d+(?:\.\d+)?)(.*)$/);
-        if (valueEl && match) {
-          const target = parseFloat(match[1]);
-          const suffix = match[2];
-          const decimals = match[1].includes(".")
-            ? match[1].split(".")[1].length
-            : 0;
-          const counter = { val: 0 };
-          gsap.to(counter, {
-            val: target,
-            duration: 1.7,
-            ease: "power2.out",
-            scrollTrigger: { trigger: card, start: "top 82%" },
-            onUpdate: () => {
-              valueEl.textContent = counter.val.toFixed(decimals) + suffix;
+              start: "top 58%",
+              end: "bottom 42%",
+              scrub: 0.35,
+              toggleActions: "play reverse play reverse",
             },
           });
-        }
-      });
+        });
 
-      gsap.from(".contact-form", {
-        rotateX: 12,
-        y: 80,
-        opacity: 0,
-        transformOrigin: "50% 0%",
-        ease: "power3.out",
-        scrollTrigger: { trigger: "#contact", start: "top 70%" },
+        gsap.utils.toArray<HTMLElement>(".proof-card").forEach((card, i) => {
+          gsap.from(card, {
+            opacity: 0,
+            scale: 0.72,
+            rotate: i % 2 ? 7 : -7,
+            y: 50,
+            ease: "back.out(1.5)",
+            scrollTrigger: { trigger: card, start: "top 82%" },
+          });
+
+          // Count-up on the headline number — same "0 → 275 / 480 / 600"
+          // odometer effect as the reference site's animated stat cards.
+          // Parses a leading number (int or decimal) plus a trailing
+          // suffix (%, +, or none) and animates a plain counter object,
+          // writing the formatted text back on every tick.
+          //
+          // Reads the original value from `data-value` (set straight from
+          // PROOF data), never from the element's live textContent. GSAP
+          // renders a scroll-triggered tween's frame-0 state immediately
+          // on creation, so the very first thing textContent ever shows is
+          // the "0" starting point — if this effect ever ran a second time
+          // on an already-mounted card (StrictMode's dev double-invoke,
+          // Fast Refresh, etc.), reading textContent back would parse that
+          // leftover "0" as the new target and permanently lock the card
+          // at zero. data-value is never touched by the animation, so it's
+          // always the true source value no matter how many times this runs.
+          const valueEl = card.querySelector<HTMLElement>("strong");
+          const raw = valueEl?.dataset.value?.trim() ?? "";
+          const match = raw.match(/^(\d+(?:\.\d+)?)(.*)$/);
+          if (valueEl && match) {
+            const target = parseFloat(match[1]);
+            const suffix = match[2];
+            const decimals = match[1].includes(".")
+              ? match[1].split(".")[1].length
+              : 0;
+            const counter = { val: 0 };
+            gsap.to(counter, {
+              val: target,
+              duration: 1.7,
+              ease: "power2.out",
+              scrollTrigger: { trigger: card, start: "top 82%" },
+              onUpdate: () => {
+                valueEl.textContent = counter.val.toFixed(decimals) + suffix;
+              },
+            });
+          }
+        });
+
+        gsap.from(".contact-form", {
+          rotateX: 12,
+          y: 80,
+          opacity: 0,
+          transformOrigin: "50% 0%",
+          ease: "power3.out",
+          scrollTrigger: { trigger: "#contact", start: "top 70%" },
+        });
       });
     });
 
-    return () => ctx.revert();
+    return () => {
+      cancelled = true;
+      ctx?.revert();
+    };
   }, []);
 
-  /* Scroll-driven background colour crossfade */
+  /* Scroll-driven background colour crossfade
+     Deferred behind loadMotion() — see src/shared/motion.ts. */
   useEffect(() => {
     const layer = bgLayerRef.current;
     if (!layer) return;
@@ -975,46 +1001,58 @@ export function PortfolioPage() {
     );
 
     let currentId = "";
+    let cancelled = false;
+    let st: { kill: () => void } | undefined;
+    let apply = () => {};
 
-    const apply = () => {
-      const viewportCenter = window.scrollY + window.innerHeight / 2;
-      let match: (typeof sectionEls)[number] | undefined;
-      for (const s of sectionEls) {
-        const rect = s.el.getBoundingClientRect();
-        const top = window.scrollY + rect.top;
-        const bottom = top + rect.height;
-        if (viewportCenter >= top && viewportCenter < bottom) {
-          match = s;
-          break;
+    const onScroll = () => apply();
+    const onResize = () => apply();
+
+    loadMotion().then(({ gsap, ScrollTrigger }) => {
+      if (cancelled) return;
+      apply = () => {
+        const viewportCenter = window.scrollY + window.innerHeight / 2;
+        let match: (typeof sectionEls)[number] | undefined;
+        for (const s of sectionEls) {
+          const rect = s.el.getBoundingClientRect();
+          const top = window.scrollY + rect.top;
+          const bottom = top + rect.height;
+          if (viewportCenter >= top && viewportCenter < bottom) {
+            match = s;
+            break;
+          }
         }
-      }
-      if (!match) {
-        match =
-          viewportCenter <
-          (sectionEls[0]?.el.getBoundingClientRect().top ?? 0) + window.scrollY
-            ? sectionEls[0]
-            : sectionEls[sectionEls.length - 1];
-      }
-      if (!match || match.theme.id === currentId) return;
-      currentId = match.theme.id;
-      gsap.to(layer, {
-        backgroundColor: match.theme.bg,
-        duration: 0.6,
-        ease: "power2.out",
-        overwrite: "auto",
-      });
-      document.body.setAttribute("data-tone", match.theme.id);
-    };
+        if (!match) {
+          match =
+            viewportCenter <
+            (sectionEls[0]?.el.getBoundingClientRect().top ?? 0) +
+              window.scrollY
+              ? sectionEls[0]
+              : sectionEls[sectionEls.length - 1];
+        }
+        if (!match || match.theme.id === currentId) return;
+        currentId = match.theme.id;
+        gsap.to(layer, {
+          backgroundColor: match.theme.bg,
+          duration: 0.6,
+          ease: "power2.out",
+          overwrite: "auto",
+        });
+        document.body.setAttribute("data-tone", match.theme.id);
+      };
 
-    gsap.set(layer, { backgroundColor: SCROLL_THEME[0].bg });
-    apply();
-    window.addEventListener("scroll", apply, { passive: true });
-    window.addEventListener("resize", apply);
-    const st = ScrollTrigger.create({ onRefresh: apply });
+      gsap.set(layer, { backgroundColor: SCROLL_THEME[0].bg });
+      apply();
+      st = ScrollTrigger.create({ onRefresh: apply });
+    });
+
+    window.addEventListener("scroll", onScroll, { passive: true });
+    window.addEventListener("resize", onResize);
     return () => {
-      st.kill();
-      window.removeEventListener("scroll", apply);
-      window.removeEventListener("resize", apply);
+      cancelled = true;
+      st?.kill();
+      window.removeEventListener("scroll", onScroll);
+      window.removeEventListener("resize", onResize);
     };
   }, []);
 
@@ -1063,97 +1101,107 @@ export function PortfolioPage() {
   }, [mobileNavOpen]);
 
   /* Final pinned scene: Contact holds for one more viewport of scroll,
-     matching the Hero's sticky feeling before the page reaches its end. */
+     matching the Hero's sticky feeling before the page reaches its end.
+     Deferred behind loadMotion() — see src/shared/motion.ts. */
   useEffect(() => {
     const section = document.getElementById("contact");
     if (!section) return;
 
-    const media = gsap.matchMedia();
-    media.add(
-      "(min-width: 761px) and (prefers-reduced-motion: no-preference)",
-      () => {
-        const grid = section.querySelector<HTMLElement>(".contact-grid");
-        const footer = section.querySelector<HTMLElement>(".site-footer");
+    let cancelled = false;
+    let media: ReturnType<typeof gsapType.matchMedia> | undefined;
 
-        /* Contact reveal frame: the scene arrives as a medium cinematic
+    loadMotion().then(({ gsap, ScrollTrigger }) => {
+      if (cancelled) return;
+      media = gsap.matchMedia();
+      media.add(
+        "(min-width: 761px) and (prefers-reduced-motion: no-preference)",
+        () => {
+          const grid = section.querySelector<HTMLElement>(".contact-grid");
+          const footer = section.querySelector<HTMLElement>(".site-footer");
+
+          /* Contact reveal frame: the scene arrives as a medium cinematic
            window, then opens to the full viewport as it reaches the pin.
            Clip-path is used instead of scaling the section, so the telephone
            canvas, text, and form stay sharp and the Proof Wall is untouched. */
-        const expandTween = gsap.fromTo(
-          section,
-          {
-            clipPath: "inset(12% 17% 12% 17% round 30px)",
-            borderRadius: "30px",
-          },
-          {
-            clipPath: "inset(0% 0% 0% 0% round 0px)",
-            borderRadius: "0px",
-            ease: "none",
-            scrollTrigger: {
-              trigger: section,
-              start: "top 92%",
-              end: "top top",
-              scrub: 1.1,
-              invalidateOnRefresh: true,
-            },
-          },
-        );
-
-        const pin = ScrollTrigger.create({
-          trigger: section,
-          start: "top top",
-          end: "+=55%",
-          pin: true,
-          pinSpacing: true,
-          anticipatePin: 1,
-          invalidateOnRefresh: true,
-        });
-
-        if (grid) {
-          gsap.fromTo(
-            grid,
-            { y: 34, scale: 0.965 },
+          const expandTween = gsap.fromTo(
+            section,
             {
-              y: -10,
-              scale: 1,
+              clipPath: "inset(12% 17% 12% 17% round 30px)",
+              borderRadius: "30px",
+            },
+            {
+              clipPath: "inset(0% 0% 0% 0% round 0px)",
+              borderRadius: "0px",
               ease: "none",
               scrollTrigger: {
                 trigger: section,
-                start: "top top",
-                end: "+=42%",
-                scrub: 0.75,
+                start: "top 92%",
+                end: "top top",
+                scrub: 1.1,
+                invalidateOnRefresh: true,
               },
             },
           );
-        }
 
-        if (footer) {
-          gsap.fromTo(
-            footer,
-            { opacity: 0.45, y: 14 },
-            {
-              opacity: 1,
-              y: 0,
-              ease: "none",
-              scrollTrigger: {
-                trigger: section,
-                start: "top top",
-                end: "+=50%",
-                scrub: 0.75,
+          const pin = ScrollTrigger.create({
+            trigger: section,
+            start: "top top",
+            end: "+=55%",
+            pin: true,
+            pinSpacing: true,
+            anticipatePin: 1,
+            invalidateOnRefresh: true,
+          });
+
+          if (grid) {
+            gsap.fromTo(
+              grid,
+              { y: 34, scale: 0.965 },
+              {
+                y: -10,
+                scale: 1,
+                ease: "none",
+                scrollTrigger: {
+                  trigger: section,
+                  start: "top top",
+                  end: "+=42%",
+                  scrub: 0.75,
+                },
               },
-            },
-          );
-        }
+            );
+          }
 
-        return () => {
-          expandTween.scrollTrigger?.kill();
-          expandTween.kill();
-          pin.kill();
-        };
-      },
-    );
+          if (footer) {
+            gsap.fromTo(
+              footer,
+              { opacity: 0.45, y: 14 },
+              {
+                opacity: 1,
+                y: 0,
+                ease: "none",
+                scrollTrigger: {
+                  trigger: section,
+                  start: "top top",
+                  end: "+=50%",
+                  scrub: 0.75,
+                },
+              },
+            );
+          }
 
-    return () => media.revert();
+          return () => {
+            expandTween.scrollTrigger?.kill();
+            expandTween.kill();
+            pin.kill();
+          };
+        },
+      );
+    });
+
+    return () => {
+      cancelled = true;
+      media?.revert();
+    };
   }, []);
 
   /* Contact entrance — mirrors the Skills section's lively, one-by-one
@@ -1170,27 +1218,36 @@ export function PortfolioPage() {
     if (!section) return;
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
 
-    const ctx = gsap.context(() => {
-      const items = gsap.utils.toArray<HTMLElement>(
-        ".contact-grid .section-eyebrow, .contact-title, .contact-email, .contact-links > a, .contact-form > *",
-        section,
-      );
-      gsap.set(items, { opacity: 0, y: 30, scale: 0.94 });
-      gsap.to(items, {
-        opacity: 1,
-        y: 0,
-        scale: 1,
-        ease: "back.out(1.6)",
-        duration: 0.7,
-        stagger: 0.09,
-        scrollTrigger: {
-          trigger: ".contact-grid",
-          start: "top 80%",
-        },
-      });
-    }, section);
+    let cancelled = false;
+    let ctx: { revert: () => void } | undefined;
 
-    return () => ctx.revert();
+    loadMotion().then(({ gsap }) => {
+      if (cancelled) return;
+      ctx = gsap.context(() => {
+        const items = gsap.utils.toArray<HTMLElement>(
+          ".contact-grid .section-eyebrow, .contact-title, .contact-email, .contact-links > a, .contact-form > *",
+          section,
+        );
+        gsap.set(items, { opacity: 0, y: 30, scale: 0.94 });
+        gsap.to(items, {
+          opacity: 1,
+          y: 0,
+          scale: 1,
+          ease: "back.out(1.6)",
+          duration: 0.7,
+          stagger: 0.09,
+          scrollTrigger: {
+            trigger: ".contact-grid",
+            start: "top 80%",
+          },
+        });
+      }, section);
+    });
+
+    return () => {
+      cancelled = true;
+      ctx?.revert();
+    };
   }, []);
 
   /* Contact link scroll-lighting */
@@ -1273,36 +1330,46 @@ export function PortfolioPage() {
 
   /* Custom cursor removed — using the native mouse arrow everywhere. */
 
-  /* Magnetic CTAs */
+  /* Magnetic CTAs
+     Deferred behind loadMotion() — see src/shared/motion.ts. */
   useEffect(() => {
     if (!window.matchMedia("(pointer: fine)").matches) return;
+    let cancelled = false;
     const cleanups: (() => void)[] = [];
-    [headerCTARef.current, resumeCTARef.current].forEach((item) => {
-      if (!item) return;
-      const onMove = (e: MouseEvent) => {
-        const r = item.getBoundingClientRect();
-        gsap.to(item, {
-          x: (e.clientX - r.left - r.width / 2) * 0.35,
-          y: (e.clientY - r.top - r.height / 2) * 0.35,
-          duration: 0.3,
-          ease: "power2.out",
+
+    loadMotion().then(({ gsap }) => {
+      if (cancelled) return;
+      [headerCTARef.current, resumeCTARef.current].forEach((item) => {
+        if (!item) return;
+        const onMove = (e: MouseEvent) => {
+          const r = item.getBoundingClientRect();
+          gsap.to(item, {
+            x: (e.clientX - r.left - r.width / 2) * 0.35,
+            y: (e.clientY - r.top - r.height / 2) * 0.35,
+            duration: 0.3,
+            ease: "power2.out",
+          });
+        };
+        const onLeave = () =>
+          gsap.to(item, {
+            x: 0,
+            y: 0,
+            duration: 0.5,
+            ease: "elastic.out(1.1,0.4)",
+          });
+        item.addEventListener("mousemove", onMove);
+        item.addEventListener("mouseleave", onLeave);
+        cleanups.push(() => {
+          item.removeEventListener("mousemove", onMove);
+          item.removeEventListener("mouseleave", onLeave);
         });
-      };
-      const onLeave = () =>
-        gsap.to(item, {
-          x: 0,
-          y: 0,
-          duration: 0.5,
-          ease: "elastic.out(1.1,0.4)",
-        });
-      item.addEventListener("mousemove", onMove);
-      item.addEventListener("mouseleave", onLeave);
-      cleanups.push(() => {
-        item.removeEventListener("mousemove", onMove);
-        item.removeEventListener("mouseleave", onLeave);
       });
     });
-    return () => cleanups.forEach((c) => c());
+
+    return () => {
+      cancelled = true;
+      cleanups.forEach((c) => c());
+    };
   }, []);
 
   /* Contact form */

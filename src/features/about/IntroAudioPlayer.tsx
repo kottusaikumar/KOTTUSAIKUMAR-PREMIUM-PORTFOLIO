@@ -28,10 +28,17 @@ export function IntroAudioPlayer({
   const [isPlaying, setIsPlaying] = useState(false);
   const [currentTime, setCurrentTime] = useState(0);
   const [duration, setDuration] = useState(0);
+  // The <audio> element is only ever given a real `src` once the
+  // visitor presses Play — until then it renders with no `src` at all
+  // (not even `preload="metadata"`, which some browsers still use as
+  // an excuse to fetch a meaningful chunk of the file up front). That
+  // was the source of ~1.6MB being transferred during initial page
+  // load for a section most visitors never scroll to, let alone play.
+  const [armed, setArmed] = useState(false);
 
   useEffect(() => {
     const el = audioRef.current;
-    if (!el) return;
+    if (!el || !armed) return;
 
     const onTimeUpdate = () => setCurrentTime(el.currentTime);
     const onLoadedMetadata = () => setDuration(el.duration || 0);
@@ -57,11 +64,21 @@ export function IntroAudioPlayer({
       el.removeEventListener("play", onPlay);
       el.removeEventListener("pause", onPause);
     };
-  }, [src]);
+  }, [src, armed]);
 
   const togglePlay = () => {
     const el = audioRef.current;
     if (!el) return;
+    if (!armed) {
+      // First tap: mount the real `src` now, then start playback once
+      // the element has picked it up (same tick — React applies the
+      // `src` attribute before the browser needs it for `.play()`).
+      setArmed(true);
+      requestAnimationFrame(() => {
+        void audioRef.current?.play().catch(() => {});
+      });
+      return;
+    }
     if (el.paused) {
       void el.play().catch(() => {});
     } else {
@@ -85,7 +102,7 @@ export function IntroAudioPlayer({
       role="group"
       aria-label={title}
     >
-      <audio ref={audioRef} src={src} preload="metadata" />
+      <audio ref={audioRef} src={armed ? src : undefined} preload="none" />
       <button
         type="button"
         className="intro-audio-play-btn"
